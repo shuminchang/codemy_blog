@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Create a New Profile Page
+{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <h1>Create Profile Page...</h1>
+    <br/><br/>
+    <div class="form-group">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-secondary">Create Profile</button>
+        </form>
+    </div>
+
+    <!-- Replace the following script to form_valid() in CreateProfilePageView to prevent hacker using javascript to do bad thing to you -->
+    <!-- <script>
+        var name = "{{ user.id }}";
+        document.getElementById("elder").value = name;
+    </script> -->
+{% else %}
+Your are not allow here (and you know it...)
+{% endif %}
+
+{% endblock %}
