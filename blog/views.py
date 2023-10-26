@@ -57,7 +57,26 @@ class ArticleDetailView(DetailView):
         context["cat_menu"] = cat_menu
         context["total_likes"] = total_likes
         context["liked"] = liked
+
+        # https://stackoverflow.com/questions/60497516/django-add-comment-section-on-posts-feed
+        # ask chatgpt: modify the function-based view to class-based view
+        # context['comments'] = self.object.comments.filter(active=True)  # will get error about don't have "active" argument
+        context["comment_form"] = CommentForm()
         return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()                     # retrieves the current object (a Post object) based on the URL parameters.
+        comment_form = CommentForm(request.POST)            # creates an instance of the CommentForm form, populating it with the data submitted in the POST request.
+        if comment_form.is_valid():                         # checks if the submitted form data is valid.
+            new_comment = comment_form.save(commit=False)   # a new comment object is created but not saved to the database yet
+            new_comment.post = self.object                  # The current post object is assigned to the comment's post field.
+            new_comment.save()                              # The comment is then saved to the database.
+        return self.get(self, request, *args, **kwargs)     #  the view is refreshed using the get method, ensuring that the updated context data is retrieved and the page is rendered with the new comment.
+        """
+        - return self.get(self, request, *args, **kwargs)) is not the recommended way to handle form submissions in class-based views. 
+        - Instead, you might want to consider using Django's built-in FormMixin and ProcessFormView 
+        - for handling form submissions in a cleaner and more structured way.
+        """
 
 class AddPostView(CreateView):
     model = Post

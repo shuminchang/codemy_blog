@@ -104,24 +104,45 @@
 </div>
 
 <br/><br/>
-<h1>Comments...</h1>
-<br/>
-{% if not post.comments.all %}
-    No Comments Yet... <a href="{% url 'add_comment' post.pk %}">Add One</a>
-{% else %}
-    <a href="{% url 'add_comment' post.pk %}">Add Comment</a>
-    <br/><br/>
-    {% for comment in post.comments.all %}
-        <strong>{{ comment.name }} - {{ comment.date_added }}</strong>
+<div class="comments">
+    <h1>Comments...</h1>
+    <br/>
+    {% if not post.comments.all %}
+        No Comments Yet...
+    {% else %}
         <br/>
-        {{ comment.body }}
-        <br/><br/>
-
-    {% endfor %}
-        <a href="{% url 'add_comment' post.pk %}">Add Comment</a>
-{% endif %}
+        {% for comment in post.comments.all %}
+            <div class="comment">
+                <strong>{{ comment.name }} - {{ comment.date_added }}</strong>
+                <br/>
+                {{ comment.body }}
+            </div>
+            <br/><br/>
+        {% endfor %}
+    {% endif %}
+</div>
 <br/>
 
 
 <br/><br/>
+
+<div class="add_comment">
+    <h1>Add Comment...</h1>
+    <br/><br/>
+    <div class="form-group">
+        <form method="POST">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button class="btn btn-secondary">Add Comment</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.add_comment, .comment {
+    background-color: rgb(247, 247, 239);
+    padding:1em;
+    border-radius: 15px;
+}
+</style>
 {% endblock %}
