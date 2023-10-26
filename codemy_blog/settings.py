@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'blog',
     'members',
     'ckeditor',
+    'predict',
 ]
 
 MIDDLEWARE = [
