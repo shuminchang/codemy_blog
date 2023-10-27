@@ -23,6 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
     path('members/', include('django.contrib.auth.urls')),
-    path('members/', include('members.urls')),
-    path('predict/', include('predict.urls', namespace='predict'))
+    path('members/', include('members.urls')),                      # without app_name  {% url 'name' %}
+    path('predict/', include('predict.urls', namespace='predict'))  # with app_name     {% url 'app_name:name' %}
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
