@@ -1,6 +1,6 @@
-{% extends "test_base.html" %}
+{% extends "base.html" %}
 
-{% block main %}
+{% block content %}
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -22,7 +22,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a class="btn btn-primary" href="/results" role="button">View DB</a>
+                <a class="btn btn-primary" href="/predict/results" role="button">View DB</a>
             </div>
         </div>
     </div>
