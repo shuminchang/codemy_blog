@@ -1,8 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
 <h1>Posts</h1>
+
+{% for post in object_list %}
+    <article class="media content-section">
+        {% if post.author.profile.profile_pic %}
+            <img class="rounded-circle article-img" src="{{ post.author.profile.profile_pic.url }}">
+        {% else %}
+            <img class="rounded-circle article-img" src="{% static 'blog/images/default_profile_pic.png' %}">
+        {% endif %}
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{ post.author }}</a>
+                <small class="text-muted">{{ post.post_date|date:"F d, Y"}}</small>
+            </div>
+            <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.body }}</p>
+        </div>
+    </article>
+{% endfor %}
 
 <ul>
 {% for post in object_list %}
