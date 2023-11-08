@@ -4,6 +4,7 @@ from .models import Post, Category, Comment
 from .forms import PostForm, EditForm, CommentForm
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator
 
 # def home(request):
 #     return render(request, 'home.html', {})
@@ -32,9 +33,36 @@ class HomeView(ListView):
         context["cat_menu"] = cat_menu
         return context
 
-def CategoryView(request, cats):
-    category_posts = Post.objects.filter(category=cats.replace('-', ' '))
-    return render(request, 'categories.html', {'cats': cats.title().replace('-', ' '), 'category_posts': category_posts})
+## Unsuccess to paginate function-based CategoryView, so switch to class-based
+# def CategoryView(request, cats):
+#     category_posts = Post.objects.filter(category=cats.replace('-', ' '))
+#     paginator = Paginator(category_posts, 2)  # Show 2 posts per page.
+
+#     page_number = request.GET.get("page")
+#     page_obj = paginator.get_page(page_number)
+
+#     context = {
+#         'cats': cats.title().replace('-', ' '), 
+#         'category_posts': category_posts, 
+#         "page_obj": page_obj
+#     }
+
+#     return render(request, 'categories.html', context)
+
+class CategoryView(ListView):
+    template_name = 'categories.html'
+    context_object_name = 'category_posts'
+    paginate_by = 2
+
+    def get_queryset(self):
+        cats = self.kwargs['cats'].replace('-', ' ')
+        return Post.objects.filter(category=cats)
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryView, self).get_context_data(**kwargs)
+        cats = self.kwargs['cats'].title().replace('-', ' ')
+        context['cats'] = cats
+        return context
 
 def CategoryListView(request):
     cat_menu_list = Category.objects.all()
