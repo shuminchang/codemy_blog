@@ -16,9 +16,18 @@
             <div class="article-metadata">
                 <a class="mr-2" href="#">{{ post.author }}</a>
                 <small class="text-muted">{{ post.post_date|date:"F d, Y"}}</small>
+                <small>
+                    {% if user.is_authenticated %}
+                        {% if user.id == post.author.id %}
+                            - 
+                            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'update_post' post.pk %}">Edit</a> 
+                            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'delete_post' post.pk %}">Delete</a> 
+                        {% endif %}
+                    {% endif %}
+                </small>
             </div>
-            <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.body }}</p>
+            <h2><a class="article-title" href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.body|slice:":200"|safe }}</p>
         </div>
     </article>
 {% endfor %}
@@ -45,7 +54,8 @@
 
 {% endif %}
 
-<ul>
+
+<!-- <ul>
 {% for post in object_list %}
     <li><a href="{% url 'article-detail' post.pk %}">{{ post.title }}</a> - 
         <a href="{% url 'category' post.category|slugify %}">{{ post.category }}</a> - 
@@ -61,8 +71,8 @@
             {% endif %}
         </small> <br/>
     {{ post.snippet }}
-    <!-- {{ post.body|slice:":200"|safe }}</li> -->
+    {{ post.body|slice:":200"|safe }}</li> # replace by {{ post.snippet }}
 {% endfor %}
-</ul>
+</ul> -->
 
 {% endblock %}
