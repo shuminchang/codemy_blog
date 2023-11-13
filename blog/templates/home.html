@@ -5,6 +5,37 @@
 
 <h1>Posts</h1>
 
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                {% for post in object_list %}
+                    <div class="col-md-6">
+                        <div class="card mb-4 box-shadow">
+                            {% if post.header_image %}
+                                <a href="{% url 'article-detail' post.pk %}"><img class="card-img-top" src="{{ post.header_image.url }}"></a>
+                            {% else %}
+                                <img class="card-img-top" src="{% static 'blog/images/default_header_image.jpg' %}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h2><a href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
+                                <small class="text-muted">{{ post.post_date|date:"Y-m-d"}}</small>
+                                <p class="card-text">
+                                    {{ post.body|slice:":200"|safe }}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
 {% for post in object_list %}
     <article class="media content-section">
         {% if post.author.profile.profile_pic %}
