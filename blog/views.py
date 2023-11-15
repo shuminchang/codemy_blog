@@ -141,3 +141,11 @@ class DeletePostView(DeleteView):
     model = Post
     template_name = 'delete_post.html'
     success_url = reverse_lazy('home')
+
+def SearchArticles(request):
+    if request.method == 'POST':
+        searched = request.POST['searched']
+        posts = Post.objects.filter(title__contains=searched)
+        return render(request, 'search_articles.html', {'searched': searched, 'posts': posts})
+    else:
+        return render(request, 'search_articles.html', {})

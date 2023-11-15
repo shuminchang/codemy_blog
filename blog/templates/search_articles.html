@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Search Articles
+{% endblock %}
+
+{% block content %}
+
+{% if searched %}
+    <h1>You Searched For... "{{ searched }}"</h1>
+    <br/>
+    {% for post in posts %}
+        <article class="media content-section">
+            {% if post.author.profile.profile_pic %}
+                <img class="rounded-circle article-img" src="{{ post.author.profile.profile_pic.url }}">
+            {% else %}
+                <img class="rounded-circle article-img" src="{% static 'blog/images/default_profile_pic.png' %}">
+            {% endif %}
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="#">{{ post.author }}</a>
+                    <small class="text-muted">{{ post.post_date|date:"F d, Y" }}</small>
+                    <small>
+                        {% if user.is_authenticated %}
+                            {% if user.id == post.author.id %}
+                                -
+                                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'update_post' post.pk %}">Edit</a>
+                                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'delete_post' post.pk %}">Delete</a>
+                            {% endif %}
+                        {% endif %}
+                    </small>
+                </div>
+                <h2><a class="article-title" href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
+                <p class="article-content">{{ post.body|slice:":200"|safe }}</p>
+            </div>
+        </article>
+    {% endfor %}
+{% else %}
+    <h1>You Forget To Search For a Venue</h1>
+{% endif %}
+
+{% endblock %}
