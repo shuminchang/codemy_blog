@@ -13,17 +13,13 @@
             </div>
             <div class="modal-body">
                 <h5>Prediction Input:</h5>
-                <div>Sepal Length: <span id="sl"></span></div>
-                <div>Sepal Width: <span id="sw"></span></div>
-                <div>Petal Length: <span id="pl"></span></div>
-                <div>Petal width: <span id="pw"></span></div>
                 <h5 class="pt-3">Prediction Classification:</h5>
                 <div id="prediction"></div>
             </div>
-            <div class="modal-footer">
+            <!-- <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <a class="btn btn-primary" href="{% url 'predict:results' %}" role="button">View DB</a>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -31,24 +27,12 @@
 <div class="container pt-5">
     <div class="row justify-content-md-center">
         <div class="col-md-4">
-            <h1>Iris Prediction</h1>
+            <h1>Life Style Classification</h1>
             <form action="" id="post-form">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="sepal_length">Sepal Length</label>
-                    <input type="number" step="0.1" class="form-control" id="sepal_length" placeholder="" required>
-                </div>
-                <div class="form-group">
-                    <label for="Sepal Width">Sepal Width</label>
-                    <input type="number" step="0.1" class="form-control" id="sepal_width" placeholder="" required>
-                </div>
-                <div class="form-group">
-                    <label for="petal_length">Petal Length</label>
-                    <input type="number" step="0.1" class="form-control" id="petal_length" placeholder="" required>
-                </div>
-                <div class="form-group">
-                    <label for="petal_width">Petal Width</label>
-                    <input type="number" step="0.1" class="form-control" id="petal_width" placeholder="" required>
+                    <label for="emr_text">Emr Text</label>
+                    <input type="text" step="0.1" class="form-control" id="emr_text" placeholder="" required>
                 </div>
                 <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
             </form>
@@ -61,22 +45,16 @@
         e.preventDefault();
         $.ajax({
             type:'POST',
-            url:'{% url "predict:iris" %}',
+            url:'{% url "predict:life_style" %}',
             data:{
-                sepal_length:$('#sepal_length').val(),
-                sepal_width:$('#sepal_width').val(),
-                petal_length:$('#petal_length').val(),
-                petal_width:$('#petal_width').val(),
+                emr_text:$('#emr_text').val(),
                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                 action: 'post'
             },
             success:function(json) {
                 document.forms["post-form"].reset();
                 document.getElementById("prediction").innerHTML = json['result']
-                document.getElementById("sl").innerHTML = json['sepal_length']
-                document.getElementById("sw").innerHTML = json['sepal_width']
-                document.getElementById("pl").innerHTML = json['petal_length']
-                document.getElementById("pw").innerHTML = json['petal_width']
+                document.getElementById("emr_text").innerHTML = json['emr_text']
             },
             error : function(xhr,errmsg,err) {
 

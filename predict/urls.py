@@ -5,6 +5,8 @@ app_name = 'predict'
 
 urlpatterns = [
     path('', views.prediction_page, name="prediction_page"),
-    path('predict/', views.predict_chances, name="submit_prediction"),
+    path('iris/', views.iris, name="iris"),
     path('results/', views.view_results, name='results'),
+    path('life_style/', views.life_style_page, name="life_style_page"),
+    path('life_style_predict/', views.life_style, name="life_style"),
 ]
