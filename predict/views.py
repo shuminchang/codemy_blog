@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import pandas as pd
-from .models import IrisPredResults
+from .models import IrisPredResults, LifeStylePredResults
 import unicodedata
 import re
 
@@ -22,11 +22,18 @@ def life_style_process(request):
         emr_text = str(request.POST.get('emr_text'))
         processed_text = symbol_preprocess(emr_text)
 
+        # Unpickle model
         test_model = pd.read_pickle(r"life_style_en_model_20231221.pkl")
+        # Make prediction
         test_doc = test_model(processed_text)
-        predict_cat = max(test_doc.cats, key=test_doc.cats.get)
+        # Get the max probability as results
+        classification = max(test_doc.cats, key=test_doc.cats.get)
 
-        return JsonResponse({'result': predict_cat, 'emr_text': processed_text},
+        LifeStylePredResults.objects.create(emr_text=emr_text, 
+                                            processed_text=processed_text, 
+                                            classification=classification)
+
+        return JsonResponse({'result': classification, 'emr_text': emr_text, 'processed_text': processed_text},
                             safe=False)
 
 def iris_process(request):
@@ -57,6 +64,10 @@ def view_iris_results(request):
     # Submit prediction and show all
     data = {"dataset": IrisPredResults.objects.all()}
     return render(request, "iris_results.html", data)
+
+def view_life_style_results(request):
+    data = {"dataset": LifeStylePredResults.objects.all()}
+    return render(request, "life_style_results.html", data)
 
 def symbol_preprocess(text):
     text = text.replace('\\n', '')

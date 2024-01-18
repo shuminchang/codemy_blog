@@ -11,3 +11,12 @@ class IrisPredResults(models.Model):
 
     def __str__(self):
         return self.classification
+    
+class LifeStylePredResults(models.Model):
+
+    emr_text = models.TextField()
+    processed_text = models.TextField()
+    classification = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.classification

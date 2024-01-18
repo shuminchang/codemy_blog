@@ -9,5 +9,6 @@ urlpatterns = [
     path('iris_results/', views.view_iris_results, name='iris_results'),
     path('iris_process/', views.iris_process, name="iris_process"),
     path('life_style_predict/', views.life_style_prediction_page, name="life_style_prediction_page"),
+    path('life_style_results', views.view_life_style_results, name="life_style_results"),
     path('life_style_process/', views.life_style_process, name="life_style_process"),
 ]

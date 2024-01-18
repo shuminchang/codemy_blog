@@ -16,6 +16,10 @@
                 <h5 class="pt-3">Prediction Classification:</h5>
                 <div id="prediction"></div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-primary" href="{% url 'predict:life_style_results' %}" role="button">View DB</a>
+            </div>
         </div>
     </div>
 </div>
@@ -44,6 +48,7 @@
             url:'{% url "predict:life_style_process" %}',
             data:{
                 emr_text:$('#emr_text').val(),
+                processed_text:$('#processed_text').val(),
                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                 action: 'post'
             },
@@ -51,6 +56,7 @@
                 document.forms["post-form"].reset();
                 document.getElementById("prediction").innerHTML = json['result']
                 document.getElementById("emr_text").innerHTML = json['emr_text']
+                document.getElementById("processed_text").innerHTML = json['processed_text']
             },
             error : function(xhr,errmsg,err) {
 
