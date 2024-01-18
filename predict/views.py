@@ -59,7 +59,10 @@ def iris_process(request):
         return JsonResponse({'result': classification, 'sepal_length': sepal_length,
                              'sepal_width': sepal_width, 'petal_length': petal_length, 'petal_width': petal_width},
                             safe=False)
-    
+
+def view_results(request):
+    return render(request, 'results.html')
+
 def view_iris_results(request):
     # Submit prediction and show all
     data = {"dataset": IrisPredResults.objects.all()}

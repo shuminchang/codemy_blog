@@ -11,4 +11,5 @@ urlpatterns = [
     path('life_style_predict/', views.life_style_prediction_page, name="life_style_prediction_page"),
     path('life_style_results', views.view_life_style_results, name="life_style_results"),
     path('life_style_process/', views.life_style_process, name="life_style_process"),
+    path('results/', views.view_results, name="results"),
 ]

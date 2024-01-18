@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a class="nav-link" href="{% url 'predict:iris_results' %}">IRIS Results</a>
+<a class="nav-link" href="{% url 'predict:life_style_results' %}">Life Style Results</a>
+{% endblock %}
