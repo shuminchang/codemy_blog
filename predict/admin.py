@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import PredResults
+from .models import IrisPredResults
 
-admin.site.register(PredResults)
+admin.site.register(IrisPredResults)

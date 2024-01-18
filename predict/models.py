@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class PredResults(models.Model):
+class IrisPredResults(models.Model):
 
     sepal_length = models.FloatField()
     sepal_width = models.FloatField()

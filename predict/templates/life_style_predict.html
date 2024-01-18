@@ -16,10 +16,6 @@
                 <h5 class="pt-3">Prediction Classification:</h5>
                 <div id="prediction"></div>
             </div>
-            <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a class="btn btn-primary" href="{% url 'predict:results' %}" role="button">View DB</a>
-            </div> -->
         </div>
     </div>
 </div>
@@ -45,7 +41,7 @@
         e.preventDefault();
         $.ajax({
             type:'POST',
-            url:'{% url "predict:life_style" %}',
+            url:'{% url "predict:life_style_process" %}',
             data:{
                 emr_text:$('#emr_text').val(),
                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),

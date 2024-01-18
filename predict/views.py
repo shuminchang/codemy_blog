@@ -1,17 +1,20 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import pandas as pd
-from .models import PredResults
+from .models import IrisPredResults
 import unicodedata
 import re
 
 def prediction_page(request):
     return render(request, 'predict.html')
 
-def life_style_page(request):
-    return render(request, 'life_style.html')
+def iris_prediction_page(request):
+    return render(request, 'iris_predict.html')
 
-def life_style(request):
+def life_style_prediction_page(request):
+    return render(request, 'life_style_predict.html')
+
+def life_style_process(request):
     # return render(request, 'life_style.html')
 
     if request.POST.get('action') == 'post':
@@ -26,7 +29,7 @@ def life_style(request):
         return JsonResponse({'result': predict_cat, 'emr_text': processed_text},
                             safe=False)
 
-def iris(request):
+def iris_process(request):
 
     if request.POST.get('action') == 'post':
 
@@ -43,17 +46,17 @@ def iris(request):
 
         classification = result[0]
 
-        PredResults.objects.create(sepal_length=sepal_length, sepal_width=sepal_width, petal_length=petal_length,
+        IrisPredResults.objects.create(sepal_length=sepal_length, sepal_width=sepal_width, petal_length=petal_length,
                                    petal_width=petal_width, classification=classification)
 
         return JsonResponse({'result': classification, 'sepal_length': sepal_length,
                              'sepal_width': sepal_width, 'petal_length': petal_length, 'petal_width': petal_width},
                             safe=False)
     
-def view_results(request):
+def view_iris_results(request):
     # Submit prediction and show all
-    data = {"dataset": PredResults.objects.all()}
-    return render(request, "results.html", data)
+    data = {"dataset": IrisPredResults.objects.all()}
+    return render(request, "iris_results.html", data)
 
 def symbol_preprocess(text):
     text = text.replace('\\n', '')
