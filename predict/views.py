@@ -4,6 +4,9 @@ import pandas as pd
 from .models import IrisPredResults, LifeStylePredResults
 import unicodedata
 import re
+import os
+
+current_directory_path = os.getcwd()
 
 def prediction_page(request):
     return render(request, 'predict.html')
@@ -23,9 +26,11 @@ def life_style_process(request):
         processed_text = symbol_preprocess(emr_text)
 
         # Unpickle model
-        test_model = pd.read_pickle(r"life_style_en_model_20231221.pkl")
+        life_style_model_path = os.path.join(current_directory_path, "life_style_en_model_20231221.pkl")
+        life_style_model = pd.read_pickle(life_style_model_path)
+
         # Make prediction
-        test_doc = test_model(processed_text)
+        test_doc = life_style_model(processed_text)
         # Get the max probability as results
         classification = max(test_doc.cats, key=test_doc.cats.get)
 
@@ -47,9 +52,11 @@ def iris_process(request):
         petal_width = float(request.POST.get('petal_width'))
 
         # Unpickle model
-        model = pd.read_pickle(r"/media/shumin/ssd2T/github/codemy_blog/codemy_blog/new_model.pickle")
+        iris_model_path = os.path.join(current_directory_path, "iris_model.pickle")
+        iris_model = pd.read_pickle(iris_model_path)
+        
         # Make prediction
-        result = model.predict([[sepal_length, sepal_width, petal_length, petal_width]])
+        result = iris_model.predict([[sepal_length, sepal_width, petal_length, petal_width]])
 
         classification = result[0]
 

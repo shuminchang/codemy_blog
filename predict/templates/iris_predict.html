@@ -53,10 +53,103 @@
                 <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
             </form>
         </div>
+        <div class="col-md-4">
+            <h3>Example Input</h3>
+
+            <label for="example_species">Select Example Species:</label>
+            <select class="form-control" id="example_species">
+                <option value="setosa">Iris-setosa</option>
+                <option value="versicolor">Iris-versicolor</option>
+                <option value="virginica">Iris-virginica</option>
+            </select>
+
+            <div class="form-group">
+                <label for="example_sepal_length">Sepal Length</label>
+                <input type="number" step="0.1" class="form-control" id="example_sepal_length">
+                <p id="range_sepal_length"></p>
+            </div>
+            <div class="form-group">
+                <label for="example_sepal_width">Sepal Width</label>
+                <input type="number" step="0.1" class="form-control" id="example_sepal_width">
+                <p id="range_sepal_width"></p>
+            </div>
+            <div class="form-group">
+                <label for="example_petal_length">Petal Length</label>
+                <input type="number" step="0.1" class="form-control" id="example_petal_length">
+                <p id="range_petal_length"></p>
+            </div>
+            <div class="form-group">
+                <label for="example_petal_length">Petal Length</label>
+                <input type="number" step="0.1" class="form-control" id="example_petal_width">
+                <p id="range_petal_width"></p>
+            </div>
+            <button type="button" class="btn btn-info" id="example-button">Use Example</button>
+        </div>
     </div>
 </div>
 
 <script>
+    // Example values and ranges for different species
+    const examples = {
+        setosa: { sepal_length: 5.0, sepal_width: 3.5, petal_length: 1.5, petal_width: 0.2 },
+        versicolor: { sepal_length: 6.0, sepal_width: 3.0, petal_length: 4.0, petal_width: 1.3 },
+        virginica: { sepal_length: 6.5, sepal_width: 3.0, petal_length: 5.5, petal_width: 2.0 }
+    };
+
+    const ranges = {
+        setosa: { sepal_length: '4.3 to 5.8', sepal_width: '2.3 to 4.4', petal_length: '1.0 to 1.9', petal_width: '0.1 to 0.6' },
+        versicolor: { sepal_length: '4.9 to 7.0', sepal_width: '2.0 to 3.4', petal_length: '3.0 to 5.1', petal_width: '1.0 to 1.8' },
+        virginica: { sepal_length: '4.9 to 7.9', sepal_width: '2.2 to 3.8', petal_length: '4.5 to 6.9', petal_width: '1.4 to 2.5' }
+    };
+
+    $(document).ready(function() {
+        // Set initial values
+        const selectedSpecies = $('#example_species').val();
+        const exampleValues = examples[selectedSpecies];
+        const exampleRanges = ranges[selectedSpecies];
+
+        // Set example values to the input fields
+        $('#example_sepal_length').val(exampleValues.sepal_length);
+        $('#example_sepal_width').val(exampleValues.sepal_width);
+        $('#example_petal_length').val(exampleValues.petal_length);
+        $('#example_petal_width').val(exampleValues.petal_width);
+
+        // Display ranges
+        $('#range_sepal_length').text(`Range: ${exampleRanges.sepal_length}`);
+        $('#range_sepal_width').text(`Range: ${exampleRanges.sepal_width}`);
+        $('#range_petal_length').text(`Range: ${exampleRanges.petal_length}`);
+        $('#range_petal_width').text(`Range: ${exampleRanges.petal_width}`);
+
+        // Trigger change event to update the fields
+        $('#example_species').trigger('change');
+    });
+
+    $(document).on('change', '#example_species', function() {
+        const selectedSpecies = $('#example_species').val();
+        const exampleValues = examples[selectedSpecies];
+        const exampleRanges = ranges[selectedSpecies];
+
+        // Set example values to the input fields
+        $('#example_sepal_length').val(exampleValues.sepal_length);
+        $('#example_sepal_width').val(exampleValues.sepal_width);
+        $('#example_petal_length').val(exampleValues.petal_length);
+        $('#example_petal_width').val(exampleValues.petal_width);
+
+        // Display ranges
+        $('#range_sepal_length').text(`Range: ${exampleRanges.sepal_length}`);
+        $('#range_sepal_width').text(`Range: ${exampleRanges.sepal_width}`);
+        $('#range_petal_length').text(`Range: ${exampleRanges.petal_length}`);
+        $('#range_petal_width').text(`Range: ${exampleRanges.petal_width}`);
+    });
+
+    $(document).on('click', '#example-button', function() {
+        // Set example values to the input fields
+        $('#sepal_length').val($('#example_sepal_length').val());
+        $('#sepal_width').val($('#example_sepal_width').val());
+        $('#petal_length').val($('#example_petal_length').val());
+        $('#petal_width').val($('#example_petal_width').val());
+    });
+
     $(document).on('submit', '#post-form',function(e){
         e.preventDefault();
         $.ajax({
