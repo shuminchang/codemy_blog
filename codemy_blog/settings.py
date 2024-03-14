@@ -27,6 +27,8 @@ SECRET_KEY = 'django-insecure--6srzrtksxq(u#jtalw%_a7_h7=$szw8m^vu%qi11t(=14nk4c
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['*'] # when DEBUG = False
+# ALLOWED_HOSTS = ['yourdomain.com']  # in production
 
 
 # Application definition
