@@ -2,23 +2,20 @@ from django import forms
 from .models import Post, Category, Comment
 
 class PostForm(forms.ModelForm):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label="Select Category", widget=forms.Select(attrs={'class': 'form-control'}))
+
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)
-        choices = Category.objects.all().values_list('name', 'name')
-        choice_list = []
-        for item in choices:
-            choice_list.append(item)
-        self.fields['category'].choices = choice_list
+        # Optional: update the queryset if the default one is not suitable
+        self.fields['category'].queryset = Category.objects.all()
 
     class Meta:
         model = Post
         fields = ('title', 'title_tag', 'author', 'category', 'body', 'snippet', 'header_image')
-
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'title_tag': forms.TextInput(attrs={'class': 'form-control'}),
             'author': forms.TextInput(attrs={'class': 'form-control', 'value': '', 'id': 'elder', 'type': 'hidden'}),
-            'category': forms.Select(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
             'snippet': forms.Textarea(attrs={'class': 'form-control'}),
         }
