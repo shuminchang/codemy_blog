@@ -8,3 +8,7 @@
 
 ## linode server django logout 405
 https://forum.djangoproject.com/t/showing-method-not-allowed-get-users-logout/26044/8
+
+## model not work
+- check apache error log
+    - sudo cat /var/log/apache2/error.log

@@ -5,6 +5,7 @@ from .models import IrisPredResults, LifeStylePredResults
 import unicodedata
 import re
 import os
+from django.conf import settings
 
 current_directory_path = os.getcwd()
 
@@ -17,6 +18,11 @@ def iris_prediction_page(request):
 def life_style_prediction_page(request):
     return render(request, 'life_style_predict.html')
 
+def load_model(model_type):
+    model_path = os.path.join(settings.BASE_DIR, model_type)
+    model = pd.read_pickle(model_path)
+    return model
+
 def life_style_process(request):
     # return render(request, 'life_style.html')
 
@@ -26,8 +32,7 @@ def life_style_process(request):
         processed_text = symbol_preprocess(emr_text)
 
         # Unpickle model
-        life_style_model_path = os.path.join(current_directory_path, "life_style_en_model_20231221.pkl")
-        life_style_model = pd.read_pickle(life_style_model_path)
+        life_style_model = load_model('life_style_en_model_20231221.pkl')
 
         # Make prediction
         test_doc = life_style_model(processed_text)
@@ -52,8 +57,7 @@ def iris_process(request):
         petal_width = float(request.POST.get('petal_width'))
 
         # Unpickle model
-        iris_model_path = os.path.join(current_directory_path, "iris_model.pickle")
-        iris_model = pd.read_pickle(iris_model_path)
+        iris_model = load_model('iris_model.pickle')
         
         # Make prediction
         result = iris_model.predict([[sepal_length, sepal_width, petal_length, petal_width]])
