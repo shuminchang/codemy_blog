@@ -5,3 +5,6 @@
 # iris prediction
 ## Django Machine Learning Project - Iris Prediction
 - https://www.youtube.com/watch?v=_3xj9B0qqps
+
+## linode server django logout 405
+https://forum.djangoproject.com/t/showing-method-not-allowed-get-users-logout/26044/8
