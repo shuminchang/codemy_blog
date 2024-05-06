@@ -5,7 +5,7 @@ source /var/lib/jenkins/envs/venv/bin/activate
 
 # Change directory to where your Django project is
 # This should be where your manage.py file is located
-cd /var/lib/jenkins/workspace/Shumin Blog
+cd "/var/lib/jenkins/workspace/Shumin Blog"
 
 # Run Django tests
 python manage.py test
