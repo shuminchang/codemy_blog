@@ -1,7 +1,7 @@
 #!/bin/bash
 # Activate virtual environment
 # Change the path as needed to where your virtual environment is located
-source /home/jenkins/envs/myenv/bin/activate
+source /var/lib/jenkins/envs/venv/bin/activate
 
 # Change directory to where your Django project is
 # This should be where your manage.py file is located
