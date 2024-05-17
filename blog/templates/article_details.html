@@ -26,11 +26,13 @@
 <br/>
 
 {% if post.header_image %}
-    <img src="{{ post.header_image.url }}">
+    <img src="{{ post.header_image.url }}" class="img-fluid">
 {% endif %}
 
 <br/><br/>
-{{ post.body|safe }}
+<div class="post-body-content">
+    {{ post.body|safe }}
+</div>
 
 <br/><br/>
 <!-- <a href="{% url 'home' %}" class="btn btn-secondary">Back</a> -->  
@@ -143,6 +145,17 @@
 </div>
 
 <style>
+.post-body-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: justify;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+.post-body-content img {
+    max-width: 100%;
+    height: auto;
+}
 .add_comment, .comment {
     background-color: rgb(247, 247, 239);
     padding:1em;
