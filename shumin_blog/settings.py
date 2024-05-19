@@ -152,3 +152,12 @@ EMTAIL_HOST_PASSWORD = config.get('EMAIL_PASS')
 
 # Data
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
+
+# CKEDITOR
+CKEDITOR_CONFIGS = {                                                            
+    'default': {                                                                    
+        'toolbar': 'full',                                                          
+        'height': '100%',
+        'width': '100%',
+    },
+}
