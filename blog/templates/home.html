@@ -22,14 +22,15 @@
                                 <h2><a href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
                                 <small class="text-muted">{{ post.post_date|date:"Y-m-d"}}</small>
                                 <p class="card-text">
-                                    {{ post.body|slice:":200"|safe }}
+                                    <!-- {{ post.body|slice:":200"|safe }} -->
+                                    {{ post.snippet }}
                                 </p>
-                                <div class="d-flex justify-content-between align-items-center">
+                                <!-- <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
                                         <button type="button" class="btn btn-sm btn-outline-secondary">Delete</button>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
