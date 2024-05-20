@@ -14,11 +14,12 @@
 
     {% if user.is_authenticated %}
         {% if user.id == post.author.id %}
-        - 
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'update_post' post.pk %}">Edit</a> 
-        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'delete_post' post.pk %}">Delete</a>         {% endif %}
+            - 
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'update_post' post.pk %}">Edit</a> 
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'delete_post' post.pk %}">Delete</a>         
+        {% endif %}
     {% else %}
-    Your are not allow here (and you know it...)
+        <!-- Your are not allow here (and you know it...) -->
     {% endif %}
 </small><br/>
 <hr>
