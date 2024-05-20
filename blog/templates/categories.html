@@ -28,7 +28,8 @@
                     </small>
                 </div>
                 <h2><a class="article-title" href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
-                <p class="article-content">{{ post.body|slice:":200"|safe }}</p>
+                <!-- <p class="article-content">{{ post.body|slice:":200"|safe }}</p> -->
+                <p class="article-content">{{ post.snippet }}</p>
             </div>
         </article>
     {% endfor %}
