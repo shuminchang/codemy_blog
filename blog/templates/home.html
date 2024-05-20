@@ -38,7 +38,7 @@
         </div>
     </div>
 
-{% for post in object_list %}
+<!-- {% for post in object_list %}
     <article class="media content-section">
         {% if post.author.profile.profile_pic %}
             <img class="rounded-circle article-img" src="{{ post.author.profile.profile_pic.url }}">
@@ -63,7 +63,7 @@
             <p class="article-content">{{ post.body|slice:":200"|safe }}</p>
         </div>
     </article>
-{% endfor %}
+{% endfor %} -->
 
 {% if is_paginated %}
 
