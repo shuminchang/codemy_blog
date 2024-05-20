@@ -14,7 +14,7 @@
                     <a href="{% url 'article-detail' post.pk %}"><img src="{{ post.header_image.url }}" class="d-block w-100" alt="..."></a>
                     <div class="carousel-caption d-none d-md-block">
                         <h1>{{ post.title }}</h1>
-                        <p>{{ post.body|slice:":200"|safe }}</p>
+                        <!-- <p>{{ post.body|slice:":200"|safe }}</p> -->
                     </div>
                 </div>
             {% else %}
@@ -22,7 +22,7 @@
                     <a href="{% url 'article-detail' post.pk %}"><img src="{% static 'blog/images/default_header_image.jpg' %}" class="d-block w-100" alt="..."></a>
                     <div class="carousel-caption d-none d-md-block">
                         <h1>{{ post.title }}</h1>
-                        <p>{{ post.body|slice:":200"|safe }}</p>
+                        <!-- <p>{{ post.body|slice:":200"|safe }}</p> -->
                     </div>
                 </div>
             {% endif %}
