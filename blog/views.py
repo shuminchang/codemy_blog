@@ -5,6 +5,7 @@ from .forms import PostForm, EditForm, CommentForm
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 # def home(request):
 #     return render(request, 'home.html', {})
@@ -145,7 +146,9 @@ class DeletePostView(DeleteView):
 def SearchArticles(request):
     if request.method == 'POST':
         searched = request.POST['searched']
-        posts = Post.objects.filter(title__contains=searched)
+        posts = Post.objects.filter(
+            Q(title__icontains=searched) | Q(body__icontains=searched)
+        )
         return render(request, 'search_articles.html', {'searched': searched, 'posts': posts})
     else:
         return render(request, 'search_articles.html', {})
