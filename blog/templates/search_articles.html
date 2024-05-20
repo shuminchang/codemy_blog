@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}
     Search Articles
@@ -31,14 +32,14 @@
                         {% endif %}
                     </small>
                 </div>
-                <h2><a class="article-title" href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
+                <h2><a class="article-title" href="{% url 'article-detail' post.pk %}">{{ post.title|highlight:searched|safe }}</a></h2>
                 <!-- <p class="article-content">{{ post.body|slice:":200"|safe }}</p> -->
-                <p class="article-content">{{ post.snippet }}</p>
+                <p class="article-content">{{ post.body|excerpt:searched|safe }}</p>
             </div>
         </article>
     {% endfor %}
 {% else %}
-    <h1>You Forget To Search For a Venue</h1>
+    <h1>You Forgot To Search For a Venue</h1>
 {% endif %}
 
 {% endblock %}
