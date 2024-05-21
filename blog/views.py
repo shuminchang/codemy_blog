@@ -146,9 +146,14 @@ class DeletePostView(DeleteView):
 def SearchArticles(request):
     if request.method == 'POST':
         searched = request.POST['searched']
-        posts = Post.objects.filter(
-            Q(title__icontains=searched) | Q(body__icontains=searched)
-        )
-        return render(request, 'search_articles.html', {'searched': searched, 'posts': posts})
+        if not searched:
+            posts = Post.objects.none()
+            message = 'You Forgot To Search For a Venue'
+        else:
+            posts = Post.objects.filter(
+                Q(title__icontains=searched) | Q(body__icontains=searched)
+            )
+            message = ''
+        return render(request, 'search_articles.html', {'searched': searched, 'posts': posts, 'message': message})
     else:
         return render(request, 'search_articles.html', {})

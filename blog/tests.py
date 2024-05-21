@@ -155,15 +155,70 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Post.objects.filter(pk=self.post.pk).exists())
 
+
+class SearchArticlesTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.post1 = Post.objects.create(title='Test Post', body='This is a test post body.', author=self.user)
+        self.post2 = Post.objects.create(title='Another Post', body='Another test body with Test keyword.', author=self.user)
+        self.post3 = Post.objects.create(title='Case Insensitive', body='case insensitive search', author=self.user)
+
     def test_search_articles(self):
         response = self.client.post(reverse('search-articles'), {'searched': 'Test'})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'search_articles.html')
-        # # Debugging
-        # if 'Test Post' not in response.context['posts']:
-        #     print("Posts found:", response.context['posts'])
-        # self.assertTrue('Test Post' in response.context['posts'])
 
-        # Check if there's a Post with title 'Test Post' in the QuerySet
-        found = any(post.title == 'Test Post' for post in response.context['posts'])
-        self.assertTrue(found)
+        # Check if posts with title or body containing 'Test' are found
+        found_titles = [post.title for post in response.context['posts']]
+        self.assertIn('Test Post', found_titles)
+        self.assertIn('Another Post', found_titles)
+
+        # Ensure 'Case Insensitive' post is not included in this search result
+        self.assertNotIn('Case Insensitive', found_titles)
+
+    def test_search_case_insensitivity(self):
+        response = self.client.post(reverse('search-articles'), {'searched': 'case'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_articles.html')
+
+        # Check if the post with title 'Case Insensitive' is found
+        found_titles = [post.title for post in response.context['posts']]
+        self.assertIn('Case Insensitive', found_titles)
+
+    def test_search_no_results(self):
+        response = self.client.post(reverse('search-articles'), {'searched': 'NonExistent'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_articles.html')
+
+        # Check that no posts are found
+        self.assertEqual(len(response.context['posts']), 0)
+        self.assertContains(response, 'You Searched For... "NonExistent"')
+
+    def test_search_empty_string(self):
+        response = self.client.post(reverse('search-articles'), {'searched': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_articles.html')
+
+        # Check that no posts are found
+        self.assertEqual(len(response.context['posts']), 0)
+        self.assertContains(response, 'You Forgot To Search For a Venue')
+
+    def test_search_partial_matches(self):
+        response = self.client.post(reverse('search-articles'), {'searched': 'test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_articles.html')
+
+        # Check if posts with partial match 'test' are found
+        found_titles = [post.title for post in response.context['posts']]
+        self.assertIn('Test Post', found_titles)
+        self.assertIn('Another Post', found_titles)
+
+    def test_search_highlighted_html(self):
+        response = self.client.post(reverse('search-articles'), {'searched': 'test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_articles.html')
+
+        # Check if the search term is highlighted in the response
+        self.assertContains(response, '<mark>Test</mark>', html=True)
