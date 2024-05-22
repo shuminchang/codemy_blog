@@ -154,10 +154,18 @@ EMTAIL_HOST_PASSWORD = config.get('EMAIL_PASS')
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
 # CKEDITOR
+# settings.py
 CKEDITOR_CONFIGS = {                                                            
     'default': {                                                                    
         'toolbar': 'full',                                                          
         'height': '100%',
         'width': '100%',
+        'extraPlugins': ','.join(
+            [
+                'codesnippet',
+            ]
+        ),
+        # 'codeSnippet_theme': 'default',  # Optional: specify the Prism.js theme if needed
     },
 }
+
