@@ -57,7 +57,7 @@ class TestViews(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'categories.html')
-        self.assertEqual(len(response.context['category_posts']), 2) # Testing pagination
+        self.assertEqual(len(response.context['category_posts']), 3) # Testing pagination
         self.assertEqual(response.context['cats'], 'Django')
 
     def test_category_list_view_GET(self):
