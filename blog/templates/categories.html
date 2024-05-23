@@ -7,11 +7,11 @@
     <h1>{{ cats }}</h1>
 
     {% for post in category_posts %}
-        <article class="media content-section">
+        <article class="media content-section article-spacing">
             {% if post.author.profile.profile_pic %}
-                <img class="rounded-circle article-img" src="{{ post.author.profile.profile_pic.url }}">
+                <img class="rounded-circle article-img custom-margin" src="{{ post.author.profile.profile_pic.url }}" width="200" height="200">
             {% else %}
-                <img class="rounded-circle article-img" src="{% static 'blog/images/default_profile_pic.png' %}">
+                <img class="rounded-circle article-img custom-margin" src="{% static 'blog/images/default_profile_pic.png' %}" width="200" height="200">
             {% endif %}
             <div class="media-body">
                 <div class="article-metadata">
@@ -32,6 +32,9 @@
                 <p class="article-content">{{ post.snippet }}</p>
             </div>
         </article>
+        {% if not forloop.last %}
+            <hr class="solid">
+        {% endif %}
     {% endfor %}
 
     <!-- <ul>
@@ -74,5 +77,21 @@
     {% endif %}
 
 {% endif %}
+
+<style>
+    .custom-margin {
+        margin-right: 20px;
+    }
+
+    .article-spacing {
+        margin-bottom: 20px;
+    }
+
+    /* Dashed border */
+    hr.solid {
+    border-top: 1px solid #bbb;
+    }
+
+</style>
 
 {% endblock %}

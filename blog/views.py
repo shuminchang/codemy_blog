@@ -53,7 +53,7 @@ class HomeView(ListView):
 class CategoryView(ListView):
     template_name = 'categories.html'
     context_object_name = 'category_posts'
-    paginate_by = 2
+    paginate_by = 5
 
     def get_queryset(self):
         cats = self.kwargs['cats'].replace('-', ' ')
