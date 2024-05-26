@@ -19,7 +19,7 @@
                                 <img class="card-img-top" src="{% static 'blog/images/default_header_image.jpg' %}">
                             {% endif %}
                             <div class="card-body">
-                                <h2><a href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
+                                <h2><a href="{% url 'article-detail' post.slug %}">{{ post.title }}</a></h2>
                                 <small class="text-muted">{{ post.post_date|date:"Y-m-d"}}</small>
                                 <p class="card-text">
                                     <!-- {{ post.body|slice:":200"|safe }} -->

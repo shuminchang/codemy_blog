@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from .models import Post, Category, Comment
+from django.utils.text import slugify
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -16,14 +17,15 @@ class TestViews(TestCase):
             title='Test Post', 
             body='Test Body', 
             author=self.user, 
-            category=self.category
+            category=self.category.name,
+            snippet='Test snippet'
         )
         self.comment = Comment.objects.create(
             post=self.post, 
-            name=self.user, 
+            name='testuser', 
             body='Test Comment'
         )
-        self.url = reverse('article-detail', kwargs={'pk': self.post.pk})
+        self.url = reverse('article-detail', kwargs={'slug': self.post.slug})
         self.category1 = Category.objects.create(name='Django')
         self.category2 = Category.objects.create(name='Flask')
         for i in range(5):
@@ -69,13 +71,19 @@ class TestViews(TestCase):
 
     def test_article_detail_view_GET(self):
         self.client.login(username='testuser', password='12345')
-        response = self.client.get(reverse('article-detail', args=[self.post.id]))
+        response = self.client.get(reverse('article-detail', args=[self.post.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'article_details.html')
+        self.assertTrue('total_likes' in response.context)
+        self.assertTrue('liked' in response.context)
+        self.assertTrue('comment_form' in response.context)
 
     def test_article_detail_view_POST_add_comment(self):
         self.client.login(username='testuser', password='12345')
-        response = self.client.post(self.url, {'body': 'Test Comment'})
+        response = self.client.post(reverse('article-detail', args=[self.post.slug]), {
+            'name': 'testuser',
+            'body': 'Test Comment'
+        })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Comment.objects.filter(body='Test Comment').exists())
 
@@ -155,6 +163,32 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Post.objects.filter(pk=self.post.pk).exists())
 
+    """
+    models.py test
+    """
+
+    def test_post_creation(self):
+        self.assertEqual(self.post.title, 'Test Post')
+        self.assertEqual(self.post.body, 'Test Body')
+        self.assertEqual(self.post.author.username, 'testuser')
+        self.assertEqual(self.post.category, 'Test Category')
+        self.assertEqual(self.post.snippet, 'Test snippet')
+        self.assertTrue(isinstance(self.post, Post))
+
+    def test_slug_generation(self):
+        self.post.save()
+        self.assertEqual(self.post.slug, slugify(self.post.title))
+
+    def test_total_likes(self):
+        self.post.likes.add(self.user)
+        self.assertEqual(self.post.total_like(), 1)
+        self.post.likes.remove(self.user)
+        self.assertEqual(self.post.total_like(), 0)
+
+    def test_comment_creation(self):
+        self.assertEqual(self.comment.post, self.post)
+        self.assertEqual(self.comment.name, 'testuser')
+        self.assertEqual(self.comment.body, 'Test Comment')
 
 class SearchArticlesTest(TestCase):
 
@@ -222,3 +256,6 @@ class SearchArticlesTest(TestCase):
 
         # Check if the search term is highlighted in the response
         self.assertContains(response, '<mark>Test</mark>', html=True)
+
+
+

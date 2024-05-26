@@ -73,11 +73,15 @@ class ArticleDetailView(DetailView):
     model = Post
     template_name = 'article_details.html'
 
-    def get_context_data(self, *args, **kwargs):
-        cat_menu = Category.objects.all()
-        context = super(ArticleDetailView, self).get_context_data(*args, **kwargs)
+    def get_object(self):
+        return get_object_or_404(Post, slug=self.kwargs['slug'])
 
-        stuff = get_object_or_404(Post, id=self.kwargs['pk'])
+    def get_context_data(self, *args, **kwargs):
+        context = super(ArticleDetailView, self).get_context_data(*args, **kwargs)
+        cat_menu = Category.objects.all()
+
+        # Use the object provided by "get_object"
+        stuff = self.get_object()
         total_likes = stuff.total_like()
 
         liked = False
@@ -87,11 +91,11 @@ class ArticleDetailView(DetailView):
         context["cat_menu"] = cat_menu
         context["total_likes"] = total_likes
         context["liked"] = liked
-
         # https://stackoverflow.com/questions/60497516/django-add-comment-section-on-posts-feed
         # ask chatgpt: modify the function-based view to class-based view
         # context['comments'] = self.object.comments.filter(active=True)  # will get error about don't have "active" argument
         context["comment_form"] = CommentForm()
+        
         return context
     
     def post(self, request, *args, **kwargs):

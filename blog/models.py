@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import datetime, date
 from ckeditor.fields import RichTextField
+from django.template.defaultfilters import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -41,6 +42,7 @@ class Post(models.Model):
     category = models.CharField(max_length=255, default='coding')
     snippet = models.CharField(max_length=255)
     likes = models.ManyToManyField(User, related_name='blog_posts')
+    slug = models.SlugField(unique=True, max_length=255)
 
     def total_like(self):
         return self.likes.count()
@@ -49,9 +51,14 @@ class Post(models.Model):
         return self.title + ' | ' + str(self.author) # self.author is an object, should turn it into a string
     
     def get_absolute_url(self):
-        # return reverse('article-detail', args=(str(self.id)))
-        return reverse('home')
+        return reverse('article-detail', args=[self.slug])
+        # return reverse('home')
     
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Post, self).save(*args, **kwargs)
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)

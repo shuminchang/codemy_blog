@@ -27,7 +27,7 @@
                         {% endif %}
                     </small>
                 </div>
-                <h2><a class="article-title" href="{% url 'article-detail' post.pk %}">{{ post.title }}</a></h2>
+                <h2><a class="article-title" href="{% url 'article-detail' post.slug %}">{{ post.title }}</a></h2>
                 <!-- <p class="article-content">{{ post.body|slice:":200"|safe }}</p> -->
                 <p class="article-content">{{ post.snippet }}</p>
             </div>
