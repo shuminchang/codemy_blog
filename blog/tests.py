@@ -38,8 +38,8 @@ class TestViews(TestCase):
 
     def test_like_view_POST(self):
         self.client.login(username='testuser', password='12345')
-        response = self.client.post(reverse('like_post', args=[self.post.id]), {
-            'post_id': self.post.id
+        response = self.client.post(reverse('like_post', args=[self.post.slug]), {
+            'post_slug': self.post.slug
         })
         self.assertEqual(response.status_code, 302) # Redirect to article-detail
 

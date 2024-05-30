@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Category, Comment
 from .forms import PostForm, EditForm, CommentForm
@@ -10,8 +10,8 @@ from django.db.models import Q
 # def home(request):
 #     return render(request, 'home.html', {})
 
-def LikeView(request, pk):
-    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+def LikeView(request, slug):
+    post = get_object_or_404(Post, slug=request.POST.get('post_slug'))
     liked = False
     if post.likes.filter(id=request.user.id).exists():
         post.likes.remove(request.user)
@@ -19,7 +19,7 @@ def LikeView(request, pk):
     else:
         post.likes.add(request.user)
         liked = True
-    return HttpResponseRedirect(reverse('article-detail', args=[str(pk)]))
+    return HttpResponseRedirect(reverse('article-detail', args=[slug]))
 
 class HomeView(ListView):
     model = Post
