@@ -57,7 +57,7 @@ class CategoryView(ListView):
 
     def get_queryset(self):
         cats = self.kwargs['cats'].replace('-', ' ')
-        return Post.objects.filter(category=cats)
+        return Post.objects.filter(category=cats).order_by('-post_date')
 
     def get_context_data(self, **kwargs):
         context = super(CategoryView, self).get_context_data(**kwargs)
