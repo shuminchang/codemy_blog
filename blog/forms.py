@@ -11,19 +11,20 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ('title', 'author', 'category', 'body', 'snippet', 'header_image')
+        fields = ('title', 'author', 'category', 'body', 'snippet', 'header_image', 'slug')
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             # 'title_tag': forms.TextInput(attrs={'class': 'form-control'}),
             'author': forms.TextInput(attrs={'class': 'form-control', 'value': '', 'id': 'elder', 'type': 'hidden'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
             'snippet': forms.Textarea(attrs={'class': 'form-control'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control'})
         }
 
 class EditForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'body', 'snippet')
+        fields = ('title', 'body', 'snippet', 'slug')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'This is Title Placeholder'}),
@@ -31,6 +32,7 @@ class EditForm(forms.ModelForm):
             # 'author': forms.Select(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
             'snippet': forms.Textarea(attrs={'class': 'form-control'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control'})
         }
 
 class CommentForm(forms.ModelForm):

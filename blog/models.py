@@ -4,6 +4,10 @@ from django.urls import reverse
 from datetime import datetime, date
 from ckeditor.fields import RichTextField
 from django.template.defaultfilters import slugify
+from unidecode import unidecode
+
+def custom_slugify(value):
+    return slugify(unidecode(value))
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -42,7 +46,7 @@ class Post(models.Model):
     category = models.CharField(max_length=255, default='coding')
     snippet = models.CharField(max_length=255)
     likes = models.ManyToManyField(User, related_name='blog_posts')
-    slug = models.SlugField(unique=True, max_length=255)
+    slug = models.SlugField(unique=True, max_length=255, blank=True)
 
     def total_like(self):
         return self.likes.count()
@@ -56,7 +60,9 @@ class Post(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = custom_slugify(self.title)
+        else:
+            self.slug = custom_slugify(self.slug)
         super(Post, self).save(*args, **kwargs)
 
 class Comment(models.Model):
