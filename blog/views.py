@@ -26,7 +26,7 @@ class HomeView(ListView):
     template_name = 'home.html'
     # ordering = ['-id']   order by id in descending order
     ordering = ['-post_date']
-    paginate_by = 5
+    paginate_by = 10
 
     def get_context_data(self, *args, **kwargs):
         cat_menu = Category.objects.all()
@@ -53,7 +53,7 @@ class HomeView(ListView):
 class CategoryView(ListView):
     template_name = 'categories.html'
     context_object_name = 'category_posts'
-    paginate_by = 5
+    paginate_by = 10
 
     def get_queryset(self):
         cats = self.kwargs['cats'].replace('-', ' ')
