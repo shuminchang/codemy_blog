@@ -11,7 +11,9 @@
         {% for post in object_list %}
             {% if post.header_image %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}" data-interval="100">
-                    <a href="{% url 'article-detail' post.pk %}"><img src="{{ post.header_image.url }}" class="d-block w-100" alt="..."></a>
+                    <a href="{% url 'article-detail' post.slug %}">
+                        <img class="fixed-size-image-slider" src="{{ post.header_image.url }}" class="d-block w-100" alt="...">
+                    </a>
                     <div class="carousel-caption d-none d-md-block">
                         <h1>{{ post.title }}</h1>
                         <!-- <p>{{ post.body|slice:":200"|safe }}</p> -->
@@ -19,7 +21,9 @@
                 </div>
             {% else %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}" data-interval="100">
-                    <a href="{% url 'article-detail' post.pk %}"><img src="{% static 'blog/images/default_header_image.jpg' %}" class="d-block w-100" alt="..."></a>
+                    <a href="{% url 'article-detail' post.slug %}">
+                        <img class="fixed-size-image-slider" src="{% static 'blog/images/default_header_image.jpg' %}" class="d-block w-100" alt="...">
+                    </a>
                     <div class="carousel-caption d-none d-md-block">
                         <h1>{{ post.title }}</h1>
                         <!-- <p>{{ post.body|slice:":200"|safe }}</p> -->

@@ -14,9 +14,11 @@
                     <div class="col-md-6">
                         <div class="card mb-4 box-shadow">
                             {% if post.header_image %}
-                                <a href="{% url 'article-detail' post.pk %}"><img class="card-img-top" src="{{ post.header_image.url }}"></a>
+                                <a href="{% url 'article-detail' post.pk %}">
+                                    <img class="card-img-top fixed-size-image" src="{{ post.header_image.url }}">
+                                </a>
                             {% else %}
-                                <img class="card-img-top" src="{% static 'blog/images/default_header_image.jpg' %}">
+                                <img class="card-img-top fixed-size-image" src="{% static 'blog/images/default_header_image.jpg' %}">
                             {% endif %}
                             <div class="card-body">
                                 <h2><a href="{% url 'article-detail' post.slug %}">{{ post.title }}</a></h2>
