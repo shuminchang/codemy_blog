@@ -13,20 +13,20 @@
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}" data-interval="100">
                     <a href="{% url 'article-detail' post.slug %}">
                         <img class="fixed-size-image-slider" src="{{ post.header_image.url }}" class="d-block w-100" alt="...">
+                        <div class="gradient-overlay"></div>
                     </a>
                     <div class="carousel-caption d-none d-md-block">
                         <h1>{{ post.title }}</h1>
-                        <!-- <p>{{ post.body|slice:":200"|safe }}</p> -->
                     </div>
                 </div>
             {% else %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}" data-interval="100">
                     <a href="{% url 'article-detail' post.slug %}">
                         <img class="fixed-size-image-slider" src="{% static 'blog/images/default_header_image.jpg' %}" class="d-block w-100" alt="...">
+                        <div class="gradient-overlay"></div>
                     </a>
                     <div class="carousel-caption d-none d-md-block">
                         <h1>{{ post.title }}</h1>
-                        <!-- <p>{{ post.body|slice:":200"|safe }}</p> -->
                     </div>
                 </div>
             {% endif %}
@@ -41,3 +41,26 @@
         <span class="sr-only">Next</span>
     </a>
 </div>
+<style>
+    .carousel-item {
+        position: relative;
+    }
+    .carousel-item .gradient-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+        z-index: 1;
+    }
+    .carousel-caption {
+        position: absolute;
+        bottom: 50px; /* Adjust this value to move the title up or down */
+        left: 10%; /* Adjusted to center the wider caption */
+        width: 80%; /* Adjusted to allow the title to take up 80% of the width */
+        z-index: 2;
+        color: white;
+        text-align: center;
+    }
+    </style>
