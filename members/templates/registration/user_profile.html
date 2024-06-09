@@ -24,7 +24,11 @@
                 <p class="small text-muted">
                     
                     {% if page_user.website_url %}
-                        | <a href="{{ page_user.website_url }}">Website</a>
+                        <a href="{{ page_user.website_url }}">Website</a>
+                    {% endif %}
+
+                    {% if page_user.github_url %}
+                        | <a href="{{ page_user.github_url }}">Github</a>
                     {% endif %}
 
                     {% if page_user.facebook_url %}

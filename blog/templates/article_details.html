@@ -83,6 +83,10 @@
                         | <a href="{{ post.author.profile.website_url }}">Website</a>
                     {% endif %}
 
+                    {% if post.author.profile.github_url %}
+                        | <a href="{{ post.author.profile.github_url }}">Github</a>
+                    {% endif %}
+
                     {% if post.author.profile.facebook_url %}
                         | <a href="{{ post.author.profile.facebook_url }}">Facebook</a>
                     {% endif %} 
