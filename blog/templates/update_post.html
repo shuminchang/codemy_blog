@@ -6,12 +6,14 @@
 
 {% block content %}
 
+{% load static %}
+
 {% if user.is_authenticated %}
     {% if user.id == post.author.id %}
         <h1>Update Post</h1>
         <br/><br/>
         <div class="form-group">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.media }}
                 {{ form.as_p }}
@@ -24,5 +26,14 @@
 {% else %}
 You are not allowed here! (and you know it...)
 {% endif %}
+
+<script>
+    var name = "{{ user.id }}";
+    document.getElementById("elder").value = name;
+</script>
+
+<script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'blog/ckeditor_config.js' %}"></script>
 
 {% endblock %}

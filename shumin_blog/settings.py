@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'blog',
     'members',
     'ckeditor',
+    'ckeditor_uploader',
     'predict',
 ]
 
@@ -155,7 +156,7 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 EMAIL_HOST_USER = config.get('EMAIL_USER')
-EMTAIL_HOST_PASSWORD = config.get('EMAIL_PASS')
+EMAIL_HOST_PASSWORD = config.get('EMAIL_PASS')
 
 # Data
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
@@ -172,7 +173,14 @@ CKEDITOR_CONFIGS = {
                 'codesnippet',
             ]
         ),
-        # 'codeSnippet_theme': 'default',  # Optional: specify the Prism.js theme if needed
+        'filebrowserUploadUrl': "/ckeditor/upload/",
+        'filebrowserBrowseUrl': "/ckeditor/browse/",
+        'extraPlugins': 'uploadimage',  # Ensure uploadimage plugin is enabled
+        'image_maxSize': 1024 * 1024,  # Maximum image size in bytes (1 MB in this example)
+        'image_prefillDimensions': False,  # You can set this to True if you want to pre-fill image dimensions
+        'imageUploadUrl': "/ckeditor/upload/",
     },
 }
 
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"  # Ensure you have Pillow installed for image processing
