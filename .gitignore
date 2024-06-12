@@ -61,7 +61,13 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media/
+
+# Exclude media directory, but include specific test files
+/media/
+!/blog/tests/media/
+/blog/tests/media/*
+!blog/tests/media/test_horizontal.jpg
+!blog/tests/media/test_large.jpg
 
 # Flask stuff:
 instance/
@@ -121,4 +127,3 @@ dmypy.json
 
 # Static files
 staticfiles/
-
