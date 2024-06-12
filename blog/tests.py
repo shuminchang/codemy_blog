@@ -1,9 +1,13 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
+import requests
 from .models import Post, Category, Comment
 from django.utils.text import slugify
 from django.core.files.uploadedfile import SimpleUploadedFile
+from PIL import Image
+from django.test import LiveServerTestCase
+import io
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -334,25 +338,64 @@ class TestDragAndDropUpload(TestCase):
         response = self.client.post(reverse('ckeditor_upload'), {'upload': file})
         self.assertEqual(response.status_code, 400)
         self.assertIn('error', response.json())
+        
 
-class TestImageOrientationHandling(TestCase):
+class TestImageOrientationHandling(LiveServerTestCase):
 
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username='testuser', password='12345')
         self.client.login(username='testuser', password='12345')
 
-    def test_image_with_exif_orientation(self):
+    def test_horizontal_image_resize(self):
         with open('blog/tests/media/test_horizontal.jpg', 'rb') as img:
-            response = self.client.post(reverse('ckeditor_upload'), {'upload': img})
+            original_image = Image.open(img)
+            original_aspect_ratio = original_image.width / original_image.height
+
+            img.seek(0)  # Reset file pointer to the beginning
+            image = SimpleUploadedFile(img.name, img.read(), content_type='image/jpeg')
+            response = self.client.post(reverse('ckeditor_upload'), {'upload': image})
+
         self.assertEqual(response.status_code, 200)
         self.assertIn('url', response.json())
 
-    def test_image_without_exif_orientation(self):
+        # Construct the full URL from the relative URL
+        relative_url = response.json()['url']
+        full_url = self.live_server_url + relative_url
+
+        response = requests.get(full_url)
+        self.assertEqual(response.status_code, 200)
+
+        uploaded_image = Image.open(io.BytesIO(response.content))
+        uploaded_aspect_ratio = uploaded_image.width / uploaded_image.height
+
+        # Assert that the aspect ratio is maintained
+        self.assertAlmostEqual(original_aspect_ratio, uploaded_aspect_ratio, places=2)
+    
+    def test_vertical_image_resize(self):
         with open('blog/tests/media/test_large.jpg', 'rb') as img:
-            response = self.client.post(reverse('ckeditor_upload'), {'upload': img})
+            original_image = Image.open(img)
+            original_aspect_ratio = original_image.width / original_image.height
+
+            img.seek(0)  # Reset file pointer to the beginning
+            image = SimpleUploadedFile(img.name, img.read(), content_type='image/jpeg')
+            response = self.client.post(reverse('ckeditor_upload'), {'upload': image})
+
         self.assertEqual(response.status_code, 200)
         self.assertIn('url', response.json())
+
+        # Construct the full URL from the relative URL
+        relative_url = response.json()['url']
+        full_url = self.live_server_url + relative_url
+
+        response = requests.get(full_url)
+        self.assertEqual(response.status_code, 200)
+
+        uploaded_image = Image.open(io.BytesIO(response.content))
+        uploaded_aspect_ratio = uploaded_image.width / uploaded_image.height
+
+        # Assert that the aspect ratio is maintained
+        self.assertAlmostEqual(original_aspect_ratio, uploaded_aspect_ratio, places=2)
 
 class TestAuthorization(TestCase):
 
