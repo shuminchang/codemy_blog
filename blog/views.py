@@ -6,7 +6,8 @@ from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.db.models import Q
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 # def home(request):
 #     return render(request, 'home.html', {})
 
@@ -112,6 +113,7 @@ class ArticleDetailView(DetailView):
         - for handling form submissions in a cleaner and more structured way.
         """
 
+@method_decorator(csrf_protect, name='dispatch')
 class AddPostView(CreateView):
     model = Post
     form_class = PostForm

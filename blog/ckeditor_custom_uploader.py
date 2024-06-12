@@ -3,11 +3,14 @@ from django.core.files.uploadedfile import UploadedFile
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.utils.translation import gettext as _
-from PIL import Image, ExifTags
+from PIL import Image, ExifTags, UnidentifiedImageError
 from io import BytesIO
 
 def resize_image(image, max_width, max_height, max_size_kb):
-    img = Image.open(image)
+    try:
+        img = Image.open(image)
+    except UnidentifiedImageError:
+        return None  # or raise an appropriate exception
 
     # Correct image orientation using EXIF data if available
     try:
@@ -54,6 +57,7 @@ def resize_image(image, max_width, max_height, max_size_kb):
 
     return buffer.getvalue()
 
+
 def custom_upload(request, *args, **kwargs):
     for file_key in request.FILES:
         uploaded_file = request.FILES[file_key]
@@ -62,6 +66,9 @@ def custom_upload(request, *args, **kwargs):
             max_width, max_height = 800, 600
 
             image_data = resize_image(uploaded_file, max_width, max_height, max_size_kb)
+            if image_data is None:
+                return JsonResponse({'error': _('Invalid image file.')}, status=400)
+
             resized_file = ContentFile(image_data)
             resized_file.name = uploaded_file.name
             request.FILES[file_key] = resized_file

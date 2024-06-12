@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from .models import Post, Category, Comment
 from django.utils.text import slugify
+from django.core.files.uploadedfile import SimpleUploadedFile
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -257,5 +258,237 @@ class SearchArticlesTest(TestCase):
         # Check if the search term is highlighted in the response
         self.assertContains(response, '<mark>Test</mark>', html=True)
 
+    def test_search_with_special_characters(self):
+        response = self.client.post(reverse('search-articles'), {'searched': '!@#$%^&*()'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_articles.html')
+        self.assertEqual(len(response.context['posts']), 0)
 
+    def test_search_with_long_query(self):
+        long_query = 'A' * 1000
+        response = self.client.post(reverse('search-articles'), {'searched': long_query})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_articles.html')
+        self.assertEqual(len(response.context['posts']), 0)
+        # print(response.content.decode())
+        # self.assertContains(response, 'No results found.')
+        self.assertContains(response, f'You Searched For... "{long_query}"')
 
+class TestImageUpload(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.client.login(username='testuser', password='12345')
+
+    def test_valid_image_upload(self):
+        with open('blog/tests/media/test_horizontal.jpg', 'rb') as img:
+            image = SimpleUploadedFile(img.name, img.read(), content_type='image/jpeg')
+            response = self.client.post(reverse('ckeditor_upload'), {'upload': image})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('url', response.json())
+
+    def test_large_image_upload(self):
+        with open('blog/tests/media/test_large.jpg', 'rb') as img:
+            image = SimpleUploadedFile(img.name, img.read(), content_type='image/jpeg')
+            response = self.client.post(reverse('ckeditor_upload'), {'upload': image})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('url', response.json())
+
+    def test_invalid_file_upload(self):
+        file = SimpleUploadedFile("file.txt", b"file_content", content_type="text/plain")
+        response = self.client.post(reverse('ckeditor_upload'), {'upload': file})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.json())
+
+# class TestCSRFHandling(TestCase):
+
+#     def setUp(self):
+#         self.client = Client()
+#         self.user = User.objects.create_user(username='testuser', password='12345')
+#         self.client.login(username='testuser', password='12345')
+
+#     def test_missing_csrf_token(self):
+#         response = self.client.post(reverse('add_post'), {'title': 'Test Post'}, follow=True)
+#         self.assertEqual(response.status_code, 403)
+
+#     def test_invalid_csrf_token(self):
+#         response = self.client.post(reverse('add_post'), {'title': 'Test Post', 'csrfmiddlewaretoken': 'invalid'})
+#         self.assertEqual(response.status_code, 403)
+        
+class TestDragAndDropUpload(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.client.login(username='testuser', password='12345')
+
+    def test_valid_image_drag_and_drop(self):
+        with open('blog/tests/media/test_horizontal.jpg', 'rb') as img:
+            response = self.client.post(reverse('ckeditor_upload'), {'upload': img})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('url', response.json())
+
+    def test_invalid_file_drag_and_drop(self):
+        file = SimpleUploadedFile("file.txt", b"file_content", content_type="text/plain")
+        response = self.client.post(reverse('ckeditor_upload'), {'upload': file})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.json())
+
+class TestImageOrientationHandling(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.client.login(username='testuser', password='12345')
+
+    def test_image_with_exif_orientation(self):
+        with open('blog/tests/media/test_horizontal.jpg', 'rb') as img:
+            response = self.client.post(reverse('ckeditor_upload'), {'upload': img})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('url', response.json())
+
+    def test_image_without_exif_orientation(self):
+        with open('blog/tests/media/test_large.jpg', 'rb') as img:
+            response = self.client.post(reverse('ckeditor_upload'), {'upload': img})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('url', response.json())
+
+class TestAuthorization(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.other_user = User.objects.create_user(username='otheruser', password='54321')
+        self.category = Category.objects.create(name='Test Category')
+        self.post = Post.objects.create(
+            title='Test Post', 
+            body='Test Body', 
+            author=self.user, 
+            category=self.category.name,
+            snippet='Test snippet'
+        )
+
+    def test_unauthenticated_user_access(self):
+        response = self.client.get(reverse('add_post'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "You are not allowed here (and you know it...)") # assertContains will decode the content of the response, and check if it include the text
+
+    def test_authenticated_user_access(self):
+        self.client.login(username='testuser', password='12345')
+        response = self.client.get(reverse('add_post'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'add_post.html')
+
+    def test_edit_post_by_non_author(self):
+        self.client.login(username='otheruser', password='54321')
+        response = self.client.get(reverse('update_post', kwargs={'pk': self.post.pk}))
+        self.assertEqual(response.status_code, 200)  # Assuming you return 403 Forbidden for unauthorized access
+        self.assertContains(response, "You are not allowed here! (and you know it...)") # assertContains will decode the content of the response, and check if it include the text
+
+    def test_delete_post_by_non_author(self):
+        self.client.login(username='otheruser', password='54321')
+        response = self.client.get(reverse('delete_post', kwargs={'pk': self.post.pk}))
+        self.assertEqual(response.status_code, 200)  # Assuming you return 403 Forbidden for unauthorized access
+        self.assertContains(response, "Your are not allow here (and you know it...)") # assertContains will decode the content of the response, and check if it include the text
+
+class TestFormSubmission(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.client.login(username='testuser', password='12345')
+        self.category = Category.objects.create(name='Test Category')
+
+    def test_post_creation_with_valid_data(self):
+        response = self.client.post(reverse('add_post'), {
+            'title': 'Valid Post',
+            'title_tag': 'Valid Tag',
+            'body': 'This is a valid post.',
+            'snippet': 'Snippet',
+            'category': self.category.id,
+            'author': self.user.id
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Post.objects.filter(title='Valid Post').exists())
+
+    def test_post_creation_missing_required_fields(self):
+        response = self.client.post(reverse('add_post'), {
+            'title': '',
+            'body': 'This post is missing the title.',
+            'snippet': 'Snippet',
+            'category': self.category.id,
+            'author': self.user.id
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'title', 'This field is required.')
+
+    def test_post_creation_with_long_title(self):
+        long_title = 'A' * 256  # Assuming the max length is 255
+        response = self.client.post(reverse('add_post'), {
+            'title': long_title,
+            'title_tag': 'Title Tag',
+            'body': 'This post has a long title.',
+            'snippet': 'Snippet',
+            'category': self.category.id,
+            'author': self.user.id
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'title', 'Ensure this value has at most 255 characters (it has 256).')
+
+    def test_post_creation_invalid_data(self):
+        response = self.client.post(reverse('add_post'), {
+            'title': 'Invalid Category',
+            'title_tag': 'Invalid Tag',
+            'body': 'This post has an invalid category ID.',
+            'snippet': 'Snippet',
+            'category': 999,
+            'author': self.user.id
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'category', 'Select a valid choice. That choice is not one of the available choices.')
+
+    def test_post_creation_with_empty_body(self):
+        response = self.client.post(reverse('add_post'), {
+            'title': 'Title Only',
+            'title_tag': 'Title Tag',
+            'body': '',
+            'snippet': 'Snippet',
+            'category': self.category.id,
+            'author': self.user.id
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Post.objects.filter(title='Title Only').exists())
+
+    def test_post_creation_with_special_characters_in_title(self):
+        special_title = 'Title with special characters !@#$%^&*()'
+        response = self.client.post(reverse('add_post'), {
+            'title': special_title,
+            'title_tag': 'Title Tag',
+            'body': 'This post has a title with special characters.',
+            'snippet': 'Snippet',
+            'category': self.category.id,
+            'author': self.user.id
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Post.objects.filter(title=special_title).exists())
+
+class TestPagination(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.category = Category.objects.create(name='Test Category')
+        for i in range(20):
+            Post.objects.create(
+                title=f'Post {i}', 
+                body='Test Content', 
+                author=self.user, 
+                category=self.category.name
+            )
+
+    def test_category_view_pagination(self):
+        response = self.client.get(reverse('category', kwargs={'cats': self.category.name}), {'page': 2})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'categories.html')
+        self.assertEqual(len(response.context['category_posts']), 10)  # Assuming you paginate 10 posts per page
