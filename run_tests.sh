@@ -3,7 +3,7 @@
 source /var/lib/jenkins/envs/venv/bin/activate
 
 # Change directory to where your Django project is
-cd "/var/lib/jenkins/workspace/Shumin Blog dev"
+cd "$WORKSPACE"
 
 # Upgrade pip
 /var/lib/jenkins/envs/venv/bin/pip install --upgrade pip
