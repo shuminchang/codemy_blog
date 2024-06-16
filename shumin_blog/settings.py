@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'members',
     'ckeditor',
     'ckeditor_uploader',
-    'predict',
+    # 'predict',
+    'predict.apps.PredictConfig',
 ]
 
 MIDDLEWARE = [
