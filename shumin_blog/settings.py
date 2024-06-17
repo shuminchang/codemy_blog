@@ -31,8 +31,8 @@ SECRET_KEY = config['SECRET_KEY']
 DEBUG = False
 
 # ALLOWED_HOSTS = ['74.207.229.167']
-ALLOWED_HOSTS = ['*'] # when DEBUG = False
-# ALLOWED_HOSTS = ['yourdomain.com']  # in production
+# ALLOWED_HOSTS = ['*'] # when DEBUG = False
+ALLOWED_HOSTS = ['shuminapp.com', 'www.shuminapp.com']  # in production
 
 
 # Application definition
@@ -187,6 +187,7 @@ CKEDITOR_CONFIGS = {
         'filebrowserImageUploadUrl': "/ckeditor/upload/",
         'image_maxSize': 1024 * 1024,  # Maximum image size in bytes (1 MB)
         'image_prefillDimensions': False,
+        'imageUploadUrl': "/ckeditor/upload/",
     },
 }
 
