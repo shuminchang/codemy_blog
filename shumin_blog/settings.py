@@ -162,26 +162,33 @@ EMAIL_HOST_PASSWORD = config.get('EMAIL_PASS')
 # Data
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
-# CKEDITOR
-# settings.py
-CKEDITOR_CONFIGS = {                                                            
-    'default': {                                                                    
-        'toolbar': 'full',                                                          
+# CKEditor Configuration
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
         'height': '100%',
         'width': '100%',
-        'extraPlugins': ','.join(
-            [
-                'codesnippet',
-            ]
-        ),
+        'extraPlugins': ','.join([
+            'codesnippet', 'uploadimage'
+        ]),
+        'toolbar_Custom': [
+            {'name': 'document', 'items': ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
+            {'name': 'insert', 'items': ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'CodeSnippet']},
+            '/',
+            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
+            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language']},
+            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+        ],
         'filebrowserUploadUrl': "/ckeditor/upload/",
-        'filebrowserBrowseUrl': "/ckeditor/browse/",
-        'extraPlugins': 'uploadimage',  # Ensure uploadimage plugin is enabled
-        'image_maxSize': 1024 * 1024,  # Maximum image size in bytes (1 MB in this example)
-        'image_prefillDimensions': False,  # You can set this to True if you want to pre-fill image dimensions
-        'imageUploadUrl': "/ckeditor/upload/",
+        'filebrowserImageUploadUrl': "/ckeditor/upload/",
+        'image_maxSize': 1024 * 1024,  # Maximum image size in bytes (1 MB)
+        'image_prefillDimensions': False,
     },
 }
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_IMAGE_BACKEND = "pillow"  # Ensure you have Pillow installed for image processing
+CKEDITOR_IMAGE_BACKEND = "pillow"
