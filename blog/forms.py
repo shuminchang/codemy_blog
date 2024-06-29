@@ -21,9 +21,17 @@ class PostForm(forms.ModelForm):
         }
 
 class EditForm(forms.ModelForm):
+    category = forms.ChoiceField(
+        choices=[],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(EditForm, self).__init__(*args, **kwargs)
+        self.fields['category'].choices = [(cat.name, cat.name) for cat in Category.objects.all()]
     class Meta:
         model = Post
-        fields = ('title', 'body', 'snippet', 'slug', 'header_image')
+        fields = ('title', 'category', 'body', 'snippet', 'header_image', 'slug')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'This is Title Placeholder'}),
