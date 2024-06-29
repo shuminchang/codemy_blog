@@ -9,6 +9,7 @@ from PIL import Image
 from django.test import LiveServerTestCase
 import io
 import warnings
+import os
 
 warnings.filterwarnings("ignore")
 
@@ -25,6 +26,7 @@ class TestViews(TestCase):
             category=self.category.name,
             snippet='Test snippet'
         )
+        self.test_image_path = './blog/tests/media/test_horizontal.jpg'
         self.comment = Comment.objects.create(
             post=self.post, 
             name='testuser', 
@@ -145,17 +147,36 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'update_post.html')
 
-        response = self.client.post(url, {
-            'title': 'Updated Post',
-            'title_tag': 'Updated Tag',  # required
-            'body': 'Updated body text',
-            'snippet': 'Updated Snippet',    # required
-            'category': self.category.id,
-            'author': self.user.id
-        })
+        with open(self.test_image_path, 'rb') as img:
+            image = SimpleUploadedFile(img.name, img.read(), content_type='image/jpeg')
+
+            response = self.client.post(url, {
+                'title': 'Updated Post',
+                'body': 'Updated body text',
+                'snippet': 'Updated Snippet',
+                'category': self.category.id,
+                'author': self.user.id,
+                'slug': self.post.slug,
+                'header_image': image
+            })
+
         self.assertEqual(response.status_code, 302)
         self.post.refresh_from_db()
         self.assertEqual(self.post.title, 'Updated Post')
+        self.assertEqual(self.post.body, 'Updated body text')
+        self.assertEqual(self.post.snippet, 'Updated Snippet')
+        self.assertEqual(self.post.category, self.category.name)
+        self.assertEqual(self.post.author.id, self.user.id)
+        self.assertTrue(self.post.header_image)
+
+        # Check if the uploaded file name starts with the base name of the test image file
+        uploaded_base_name = os.path.splitext(os.path.basename(self.post.header_image.name))[0]
+        expected_base_name = os.path.splitext(os.path.basename(self.test_image_path))[0]
+        
+        self.assertTrue(uploaded_base_name.startswith(expected_base_name))
+
+        # Clean up the uploaded file
+        self.post.header_image.delete()
 
     def test_delete_post_view(self):
         self.client.login(username='testuser', password='password')
