@@ -13,13 +13,13 @@
                 {% for post in object_list %}
                     <div class="col-md-6">
                         <div class="card mb-4 box-shadow">
-                            {% if post.header_image %}
-                                <a href="{% url 'article-detail' post.pk %}">
+                            <a href="{% url 'article-detail' post.slug %}">
+                                {% if post.header_image %}
                                     <img class="card-img-top fixed-size-image" src="{{ post.header_image.url }}">
-                                </a>
-                            {% else %}
-                                <img class="card-img-top fixed-size-image" src="{% static 'blog/images/default_header_image.jpg' %}">
-                            {% endif %}
+                                {% else %}
+                                    <img class="card-img-top fixed-size-image" src="{% static 'blog/images/default_header_image.jpg' %}">
+                                {% endif %}
+                            </a>
                             <div class="card-body">
                                 <h2><a href="{% url 'article-detail' post.slug %}">{{ post.title }}</a></h2>
                                 <small class="text-muted">{{ post.post_date|date:"Y-m-d"}}</small>
