@@ -10,18 +10,27 @@
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- <link rel="stylesheet" href="{% static 'blog/main.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'blog/latest_posts.css' %}">
     <style>
 	.fixed-size-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
 
-.fixed-size-image-slider {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-}
+    .fixed-size-image-slider {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    hr {
+        border: none;
+        height: 1px;
+        /* Set the hr color */
+        color: #333;  /* old IE */
+        background-color: #333;  /* Modern Browsers */
+    }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>
@@ -131,17 +140,15 @@
             </div>
             <div class="col-md-4">
                 <div class="content-section">
-                    <h3>Sidebar</h3>
-                    <p class="text-muted">You can put any information here you'd like.</p>
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-light">Lastest Posts</li>
-                        <li class="list-group-item list-group-item-light">Announcements</li>
-                        <li class="list-group-item list-group-item-light">Calender</li>
-                        <li class="list-group-item list-group-item-light">etc</li>
-                    </ul>
+                    {% include '_superuser_profile.html' %}
+                    <hr>
+                    {% include '_latest_posts.html' %}
+                    <hr>
+                    {% include '_categories.html' %}
                 </div>
             </div>
         </div>
+        <br>
     </div>
 
     <!-- Optional JavaScript -->

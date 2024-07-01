@@ -1,0 +1,8 @@
+<div class="superuser-profile">
+    {% if superuser_profile %}
+        <img src="{{ superuser_profile.profile_pic.url }}" alt="{{ superuser.username }}" class="img-fluid rounded-circle">
+        <p>{{ superuser_profile.bio|safe }}</p>
+    {% else %}
+        <p>No superuser profile available.</p>
+    {% endif %}
+</div>

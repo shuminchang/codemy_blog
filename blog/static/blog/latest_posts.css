@@ -1,0 +1,24 @@
+.rounded-custom {
+    border-radius: 10px; /* Adjust the value as needed */
+    width: 100px;
+    height: 75px;
+    object-fit: cover; /* This will keep the aspect ratio */
+}
+
+.latest-posts .media {
+    display: flex;
+    align-items: center;
+}
+
+.latest-posts .media-body {
+    margin-left: 10px;
+}
+
+.latest-posts .media-body .article-title {
+    font-size: 1rem;
+    color: #000000;
+}
+
+.latest-posts .media-body .text-muted {
+    font-size: 0.8rem;
+}

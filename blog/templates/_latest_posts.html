@@ -1,0 +1,22 @@
+{% load static %}
+
+<div class="latest-posts">
+    <h4>Latest Posts</h4>
+    <ul class="list-group list-group-flush">
+        {% for post in latest_posts %}
+        <li class="list-group-item">
+            <div class="media">
+                {% if post.header_image %}
+                    <img src="{{ post.header_image.url }}" class="mr-3 rounded-custom article-img">
+                {% else %}
+                    <img src="{% static 'blog/images/default_header_image.jpg' %}" class="mr-3 rounded-custom article-img">
+                {% endif %}
+                <div class="media-body">
+                    <h5 class="mt-0"><a href="{% url 'article-detail' post.slug %}" class="article-title">{{ post.title }}</a></h5>
+                    <p class="text-muted">{{ post.post_date|date:"Y-m-d" }}</p>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
