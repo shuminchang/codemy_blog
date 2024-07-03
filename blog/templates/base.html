@@ -41,12 +41,10 @@
   </head>
   <body>
     {% include '_header.html' %}
+    {% block slider %}{% endblock %}
     <br/>
 
     <div class="container">
-        {% block slider %}
-            {% include 'slider.html' %}
-        {% endblock %}
         <br>
         <div class="row">
             <div class="col-md-8">
