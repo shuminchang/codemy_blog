@@ -2,27 +2,24 @@
 {% load static %}
 
 {% block content %}
-
-<h1>User Profile...</h1>
-
+<h1>User Profile</h1>
 <br/>
 <div class="card mb-3">
     <div class="row no-gutters">
-        <div class="col-md-2">
+        <div class="col-md-3 col-sm-4 text-center">
             {% if page_user.profile_pic %}
-                <img src="{{ page_user.profile_pic.url }}" class="rounded-circle article-img"  width="200" height="200">
+                <img src="{{ page_user.profile_pic.url }}" class="rounded-circle article-img" width="200" height="200">
             {% else %}
-                <img src="{% static 'blog/images/default_profile_pic.png' %}" class="rounded-circle article-img"  width="200" height="200">
+                <img src="{% static 'blog/images/default_profile_pic.png' %}" class="rounded-circle article-img" width="200" height="200">
             {% endif %}
         </div>
-        <div class="col-md-10">
+        <div class="col-md-9 col-sm-8">
             <div class="card-body">
                 <h5 class="card-title">
                     {{ page_user.user.first_name }}
                     {{ page_user.user.last_name }}
                 </h5>
                 <p class="small text-muted">
-                    
                     {% if page_user.website_url %}
                         <a href="{{ page_user.website_url }}">Website</a>
                     {% endif %}
@@ -33,20 +30,19 @@
 
                     {% if page_user.facebook_url %}
                         | <a href="{{ page_user.facebook_url }}">Facebook</a>
-                    {% endif %} 
+                    {% endif %}
 
                     {% if page_user.twitter_url %}
                         | <a href="{{ page_user.twitter_url }}">Twitter</a>
-                    {% endif %} 
+                    {% endif %}
 
                     {% if page_user.instagram_url %}
                         | <a href="{{ page_user.instagram_url }}">Instagram</a>
-                    {% endif %} 
+                    {% endif %}
 
                     {% if page_user.pinterest_url %}
                         | <a href="{{ page_user.pinterest_url }}">Pinterest</a>
-                    {% endif %} 
-
+                    {% endif %}
                 </p>
                 <p class="card-text">
                     {{ page_user.bio }}
@@ -56,4 +52,18 @@
     </div>
 </div>
 
+<style>
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .article-img {
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+    }
+
+</style>
 {% endblock %}
