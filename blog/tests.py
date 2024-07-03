@@ -19,7 +19,7 @@ class TestViews(TestCase):
         self.client = Client()
         self.user = User.objects.create_user(username='testuser', password='12345')
         self.category = Category.objects.create(name='Test Category')
-        self.update_category = Category.objects.create(name='Updated Category')
+        # self.update_category = Category.objects.create(name='Updated Category')
         self.post = Post.objects.create(
             title='Test Post', 
             body='Test Body', 
@@ -143,6 +143,7 @@ class TestViews(TestCase):
 
     def test_update_post_view(self):
         self.client.login(username='testuser', password='password')
+        update_category = Category.objects.create(name='Updated Category')
         url = reverse('update_post', kwargs={'pk': self.post.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -155,7 +156,7 @@ class TestViews(TestCase):
                 'title': 'Updated Post',
                 'body': 'Updated body text',
                 'snippet': 'Updated Snippet',
-                'category': self.update_category.name,
+                'category': update_category.name,
                 'author': self.user.id,
                 'slug': self.post.slug,
                 'header_image': image
@@ -166,7 +167,7 @@ class TestViews(TestCase):
         self.assertEqual(self.post.title, 'Updated Post')
         self.assertEqual(self.post.body, 'Updated body text')
         self.assertEqual(self.post.snippet, 'Updated Snippet')
-        self.assertEqual(self.post.category, self.update_category.name)
+        self.assertEqual(self.post.category, update_category.name)
         self.assertEqual(self.post.author.id, self.user.id)
         self.assertTrue(self.post.header_image)
 
