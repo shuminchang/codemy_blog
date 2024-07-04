@@ -13,6 +13,8 @@
             </div>
             <div class="modal-body">
                 <h5>Prediction Input:</h5>
+                <div><b>&nbsp;&nbsp;Raw Text: </b><span id="raw_text"></span></div>
+                <div><b>&nbsp;&nbsp;Processed Text: </b><span id="processed_text"></span></div>
                 <h5 class="pt-3">Prediction Classification:</h5>
                 <div id="prediction"></div>
             </div>
@@ -58,9 +60,10 @@
             },
             success:function(json) {
                 document.forms["post-form"].reset();
-                document.getElementById("prediction").innerHTML = json['result']
-                document.getElementById("emr_text").innerHTML = json['emr_text']
-                document.getElementById("processed_text").innerHTML = json['processed_text']
+                document.getElementById("prediction").innerHTML = '<b>&nbsp;&nbsp;' + json['result'] + '</b>';
+                document.getElementById("emr_text").innerHTML = json['emr_text'];
+                document.getElementById("raw_text").innerHTML = json['emr_text'];
+                document.getElementById("processed_text").innerHTML = json['processed_text'];
             },
             error : function(xhr,errmsg,err) {
 

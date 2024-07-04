@@ -13,10 +13,10 @@
             </div>
             <div class="modal-body">
                 <h5>Prediction Input:</h5>
-                <div>Sepal Length: <span id="sl"></span></div>
-                <div>Sepal Width: <span id="sw"></span></div>
-                <div>Petal Length: <span id="pl"></span></div>
-                <div>Petal Width: <span id="pw"></span></div>
+                <div><b>&nbsp;&nbsp;Sepal Length: </b><span id="sl"></span></div>
+                <div><b>&nbsp;&nbsp;Sepal Width: </b><span id="sw"></span></div>
+                <div><b>&nbsp;&nbsp;Petal Length: </b><span id="pl"></span></div>
+                <div><b>&nbsp;&nbsp;Petal Width: </b><span id="pw"></span></div>
                 <h5 class="pt-3">Prediction Classification:</h5>
                 <div id="prediction"></div>
             </div>
@@ -171,7 +171,7 @@
             },
             success: function(json) {
                 document.forms["post-form"].reset();
-                document.getElementById("prediction").innerHTML = json['result'];
+                document.getElementById("prediction").innerHTML = '<b>&nbsp;&nbsp;' + json['result'] + '</b>';
                 document.getElementById("sl").innerHTML = json['sepal_length'];
                 document.getElementById("sw").innerHTML = json['sepal_width'];
                 document.getElementById("pl").innerHTML = json['petal_length'];
