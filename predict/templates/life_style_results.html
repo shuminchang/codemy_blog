@@ -2,31 +2,34 @@
 
 {% block content %}
     <div class="container pt-5">
-        <div class="row">
-
-        <h1>Life Style Prediction Results</h1>
-
-            <table class="table">
-                <thead>
-                <tr>
-                <th scope="col">#</th>
-                <th scope="col">Emr Text</th>
-                <th scope="col">Processed Text</th>
-                <th scope="col">Prediction</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for data in dataset %}
-                    <tr>
-                    <th scope="row">{{ data.id }}</th>
-                    <td>{{ data.emr_text }}</td>
-                    <td>{{ data.processed_text }}</td>
-                    <td>{{ data.classification }}</td>
-                    </tr>
-                {% endfor %}
-
-                </tbody>
-            </table>
+        <div class="row justify-content-md-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-body">
+                        <h1>Life Style Prediction Results</h1>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Emr Text</th>
+                                    <th scope="col">Processed Text</th>
+                                    <th scope="col">Prediction</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in dataset %}
+                                    <tr>
+                                        <th scope="row">{{ data.id }}</th>
+                                        <td>{{ data.emr_text }}</td>
+                                        <td>{{ data.processed_text }}</td>
+                                        <td>{{ data.classification }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

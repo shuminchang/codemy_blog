@@ -26,16 +26,20 @@
 
 <div class="container pt-5">
     <div class="row justify-content-md-center">
-        <div class="col-md-4">
-            <h1>Life Style Classification</h1>
-            <form action="" id="post-form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="emr_text">Emr Text</label>
-                    <input type="text" step="0.1" class="form-control" id="emr_text" placeholder="" required>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h1>Life Style Classification</h1>
+                    <form action="" id="post-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emr_text">Emr Text</label>
+                            <input type="text" step="0.1" class="form-control" id="emr_text" placeholder="" required>
+                        </div>
+                        <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
+                    </form>
                 </div>
-                <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
-            </form>
+            </div>
         </div>
     </div>
 </div>

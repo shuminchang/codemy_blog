@@ -16,7 +16,7 @@
                 <div>Sepal Length: <span id="sl"></span></div>
                 <div>Sepal Width: <span id="sw"></span></div>
                 <div>Petal Length: <span id="pl"></span></div>
-                <div>Petal width: <span id="pw"></span></div>
+                <div>Petal Width: <span id="pw"></span></div>
                 <h5 class="pt-3">Prediction Classification:</h5>
                 <div id="prediction"></div>
             </div>
@@ -30,60 +30,66 @@
 
 <div class="container pt-5">
     <div class="row justify-content-md-center">
-        <div class="col-md-4">
-            <h3>Example Input</h3>
-
-            <label for="example_species">Select Example Species:</label>
-            <select class="form-control" id="example_species">
-                <option value="setosa">Iris-setosa</option>
-                <option value="versicolor">Iris-versicolor</option>
-                <option value="virginica">Iris-virginica</option>
-            </select>
-
-            <div class="form-group">
-                <label for="example_sepal_length">Sepal Length</label>
-                <input type="number" step="0.1" class="form-control" id="example_sepal_length">
-                <p id="range_sepal_length"></p>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Example Input</h3>
+                    <label for="example_species">Select Example Species:</label>
+                    <select class="form-control" id="example_species">
+                        <option value="setosa">Iris-setosa</option>
+                        <option value="versicolor">Iris-versicolor</option>
+                        <option value="virginica">Iris-virginica</option>
+                    </select>
+                    <div class="form-group">
+                        <label for="example_sepal_length">Sepal Length</label>
+                        <input type="number" step="0.1" class="form-control" id="example_sepal_length">
+                        <p id="range_sepal_length"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="example_sepal_width">Sepal Width</label>
+                        <input type="number" step="0.1" class="form-control" id="example_sepal_width">
+                        <p id="range_sepal_width"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="example_petal_length">Petal Length</label>
+                        <input type="number" step="0.1" class="form-control" id="example_petal_length">
+                        <p id="range_petal_length"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="example_petal_width">Petal Width</label>
+                        <input type="number" step="0.1" class="form-control" id="example_petal_width">
+                        <p id="range_petal_width"></p>
+                    </div>
+                    <button type="button" class="btn btn-info" id="example-button">Use Example</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="example_sepal_width">Sepal Width</label>
-                <input type="number" step="0.1" class="form-control" id="example_sepal_width">
-                <p id="range_sepal_width"></p>
-            </div>
-            <div class="form-group">
-                <label for="example_petal_length">Petal Length</label>
-                <input type="number" step="0.1" class="form-control" id="example_petal_length">
-                <p id="range_petal_length"></p>
-            </div>
-            <div class="form-group">
-                <label for="example_petal_length">Petal Length</label>
-                <input type="number" step="0.1" class="form-control" id="example_petal_width">
-                <p id="range_petal_width"></p>
-            </div>
-            <button type="button" class="btn btn-info" id="example-button">Use Example</button>
         </div>
-        <div class="col-md-4">
-            <h1>Iris Prediction</h1>
-            <form action="" id="post-form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="sepal_length">Sepal Length</label>
-                    <input type="number" step="0.1" class="form-control" id="sepal_length" placeholder="" required>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h1>Iris Prediction</h1>
+                    <form action="" id="post-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="sepal_length">Sepal Length</label>
+                            <input type="number" step="0.1" class="form-control" id="sepal_length" placeholder="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sepal_width">Sepal Width</label>
+                            <input type="number" step="0.1" class="form-control" id="sepal_width" placeholder="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petal_length">Petal Length</label>
+                            <input type="number" step="0.1" class="form-control" id="petal_length" placeholder="" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="petal_width">Petal Width</label>
+                            <input type="number" step="0.1" class="form-control" id="petal_width" placeholder="" required>
+                        </div>
+                        <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="Sepal Width">Sepal Width</label>
-                    <input type="number" step="0.1" class="form-control" id="sepal_width" placeholder="" required>
-                </div>
-                <div class="form-group">
-                    <label for="petal_length">Petal Length</label>
-                    <input type="number" step="0.1" class="form-control" id="petal_length" placeholder="" required>
-                </div>
-                <div class="form-group">
-                    <label for="petal_width">Petal Width</label>
-                    <input type="number" step="0.1" class="form-control" id="petal_width" placeholder="" required>
-                </div>
-                <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -150,32 +156,32 @@
         $('#petal_width').val($('#example_petal_width').val());
     });
 
-    $(document).on('submit', '#post-form',function(e){
+    $(document).on('submit', '#post-form', function(e){
         e.preventDefault();
         $.ajax({
-            type:'POST',
-            url:'{% url "predict:iris_process" %}',
-            data:{
-                sepal_length:$('#sepal_length').val(),
-                sepal_width:$('#sepal_width').val(),
-                petal_length:$('#petal_length').val(),
-                petal_width:$('#petal_width').val(),
-                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            type: 'POST',
+            url: '{% url "predict:iris_process" %}',
+            data: {
+                sepal_length: $('#sepal_length').val(),
+                sepal_width: $('#sepal_width').val(),
+                petal_length: $('#petal_length').val(),
+                petal_width: $('#petal_width').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
                 action: 'post'
             },
-            success:function(json) {
+            success: function(json) {
                 document.forms["post-form"].reset();
-                document.getElementById("prediction").innerHTML = json['result']
-                document.getElementById("sl").innerHTML = json['sepal_length']
-                document.getElementById("sw").innerHTML = json['sepal_width']
-                document.getElementById("pl").innerHTML = json['petal_length']
-                document.getElementById("pw").innerHTML = json['petal_width']
+                document.getElementById("prediction").innerHTML = json['result'];
+                document.getElementById("sl").innerHTML = json['sepal_length'];
+                document.getElementById("sw").innerHTML = json['sepal_width'];
+                document.getElementById("pl").innerHTML = json['petal_length'];
+                document.getElementById("pw").innerHTML = json['petal_width'];
             },
-            error : function(xhr,errmsg,err) {
-
+            error: function(xhr, errmsg, err) {
+                // Handle error
             }
         });
-    })
+    });
 </script>
 
 {% endblock %}
