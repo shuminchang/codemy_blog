@@ -1,3 +1,4 @@
+import warnings
 from django.test import TestCase, Client
 from django.urls import reverse
 from .models import LifeStylePredResults, IrisPredResults
@@ -34,8 +35,11 @@ class TestViews(TestCase):
         # Prepare data for POST request
         data = {'action': 'post', 'emr_text': 'I don\'t smoke'}
 
-        # Make POST request and check response
-        response = self.client.post(reverse('predict:life_style_process'), data)
+        # Suppress the specific warning
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=UserWarning)
+            response = self.client.post(reverse('predict:life_style_process'), data)
+        
         self.assertEqual(response.status_code, 200)
 
         # Parse JSON response
@@ -61,7 +65,11 @@ class TestViews(TestCase):
             'petal_width': 4.0
         }
         
-        response = self.client.post(reverse('predict:iris_process'), data)
+        # Suppress the specific warning
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=UserWarning)
+            response = self.client.post(reverse('predict:iris_process'), data)
+        
         self.assertEqual(response.status_code, 200)
 
         # Parse JSON response
@@ -79,18 +87,12 @@ class TestViews(TestCase):
         self.assertTemplateUsed(response, 'results.html')
 
     def test_view_iris_results(self):
-        # Create a sample IrisPredResults object if needed
-        # IrisPredResults.objects.create(...)
-
         response = self.client.get(reverse('predict:iris_results'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'iris_results.html')
         self.assertTrue('dataset' in response.context)
 
     def test_view_life_style_results(self):
-        # Create a sample LifeStylePredResults object if needed
-        # LifeStylePredResults.objects.create(...)
-
         response = self.client.get(reverse('predict:life_style_results'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'life_style_results.html')
