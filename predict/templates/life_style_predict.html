@@ -31,6 +31,17 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-body">
+                    <h3>Example Input</h3>
+                    <div class="form-group">
+                        <label id="example_emr_text">The patient is a 1 1/2 pack per day smoker .he drinks approximately two beers per night .</label>
+                    </div>
+                    <button type="button" class="btn btn-info" id="example-button">Use Example</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
                     <h1>Life Style Classification</h1>
                     <form action="" id="post-form">
                         {% csrf_token %}
@@ -47,6 +58,10 @@
 </div>
 
 <script>
+    $(document).on('click', '#example-button', function() {
+        $('#emr_text').val($('#example_emr_text').text());
+    });
+
     $(document).on('submit', '#post-form',function(e){
         e.preventDefault();
         $.ajax({
