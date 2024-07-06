@@ -1,5 +1,5 @@
 <div class="superuser-profile">
-    {% if superuser_profile %}
+    {% if superuser_profile and superuser_profile.profile_pic %}
         <img src="{{ superuser_profile.profile_pic.url }}" alt="{{ superuser.username }}" class="img-fluid rounded-circle">
         <p>{{ superuser_profile.bio|safe }}</p>
     {% else %}
