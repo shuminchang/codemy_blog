@@ -18,6 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from blog.sitemaps import BlogPostSitemap, StaticViewSitemap, CategorySitemap, PredictViewSitemap
+
+sitemaps = {
+    'blogposts': BlogPostSitemap,
+    'static': StaticViewSitemap,
+    'categories': CategorySitemap,
+    'predict': PredictViewSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +35,5 @@ urlpatterns = [
     path('members/', include('members.urls')),
     path('predict/', include('predict.urls', namespace='predict')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
