@@ -20,7 +20,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from your repository
-                git 'https://github.com/shuminchang/codemy_blog.git'
+                git branch: 'dev', url: 'https://github.com/shuminchang/codemy_blog.git'
             }
         }
 
