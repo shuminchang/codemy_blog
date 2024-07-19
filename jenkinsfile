@@ -20,7 +20,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from your repository
-                git 'https://github.com/your-repo/your-django-project.git'
+                git 'https://github.com/shuminchang/codemy_blog.git'
             }
         }
 
