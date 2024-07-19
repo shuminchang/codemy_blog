@@ -62,14 +62,14 @@ pipeline {
 
                     // Check if the server started correctly
                     def server_pid = readFile('server_pid.txt').trim()
-                    if (!sh(returnStatus: true, script: "ps -p ${server_pid}")) {
+                    if (sh(returnStatus: true, script: "ps -p ${server_pid}") != 0) {
                         echo "Django server failed to start. Check server_log.txt for details."
                         sh 'cat server_log.txt'
                         error "Django server failed to start."
+                    } else {
+                        // Run tests
+                        sh "${PYTHON} manage.py test"
                     }
-
-                    // Run tests
-                    sh "${PYTHON} manage.py test"
                 }
             }
         }
