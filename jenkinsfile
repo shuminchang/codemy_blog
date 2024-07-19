@@ -38,6 +38,13 @@ pipeline {
         stage('Run Server') {
             steps {
                 script {
+                    // Ensure the port is not already in use
+                    sh """
+                    if lsof -i:8001; then
+                        echo "Port 8001 is already in use. Exiting."
+                        exit 1
+                    fi
+                    """
                     // Start the Django development server in the background
                     sh """
                     ${PYTHON} manage.py runserver 8001 > server_log.txt 2>&1 &
@@ -70,9 +77,13 @@ pipeline {
         stage('Cleanup') {
             steps {
                 script {
-                    // Terminate the Django development server
+                    // Terminate the Django development server if it's running
                     def server_pid = readFile('server_pid.txt').trim()
-                    sh "kill ${server_pid}"
+                    sh """
+                    if ps -p ${server_pid} > /dev/null; then
+                        kill ${server_pid}
+                    fi
+                    """
                 }
             }
         }
