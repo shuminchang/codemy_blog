@@ -28,7 +28,7 @@ pipeline {
             // Purpose: Retrieve the latest code from the specified branch in the Git repository
             steps {
                 // Checkout the code from your repository
-                git branch: 'dev', url: 'https://github.com/shuminchang/codemy_blog.git'
+                git branch: 'main', url: 'https://github.com/shuminchang/codemy_blog.git'
             }
         }
 
