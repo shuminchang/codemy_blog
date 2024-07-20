@@ -130,10 +130,9 @@
                         echo "SERVER_IP: ${SERVER_IP}"
                         TIMESTAMP=$(date +%Y%m%d%H%M%S)
                         echo "TIMESTAMP: ${TIMESTAMP}"
-                        ssh -i $SSH_KEY $SSH_USER@$SERVER_IP << EOF
-                        python '${DEPLOY_DIR}/manage.py' dumpdata > '${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.json'
-                        pg_dump mydatabase > '${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.sql'
-                        tar -czf '${RELEASE_DIR}/shumin_blog_${TIMESTAMP}.tar.gz' -C '${DEPLOY_DIR}' .
+                        ssh shumin@139.162.86.206
+                        python '/home/shumin/shumin_blog/manage.py' dumpdata > '/home/shumin/db_backup/shumin_blog_${TIMESTAMP}.json'
+                        pg_dump mydatabase > '/home/shumin/db_backup/shumin_blog_${TIMESTAMP}.sql'
                         EOF
                         '''
                     }
