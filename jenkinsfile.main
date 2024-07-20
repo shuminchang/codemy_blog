@@ -1,173 +1,177 @@
-// Defines the Jenkins pipeline
-pipeline {
-    // the pipeline can run on any available Jenkins agent
-    agent any
+    // Defines the Jenkins pipeline
+    pipeline {
+        // the pipeline can run on any available Jenkins agent
+        agent any
 
-    environment {
-        // Define environment variables for the virtual environment directory, pip, and python executables
-        VENV_DIR = '/var/lib/jenkins/envs/venv' // virtual environment directory path
-        PIP = "${VENV_DIR}/bin/pip"             // the path to the pip executable
-        PYTHON = "${VENV_DIR}/bin/python"       // the path to the python executable
-        DEPLOY_DIR = "/home/shumin/shumin_blog"
-        DB_BACKUP_DIR = "/home/shumin/db_backup"
-        RELEASE_DIR = "/home/shumin/release"
-    }
-
-    stages {
-        stage('Setup') {
-            // Purpose: Ensure a clean workspace to avoid issues from previous builds
-            steps {
-                script {
-                    // Clean the workspace to ensure a fresh start
-                    cleanWs()
-                }
-            }
+        environment {
+            // Define environment variables for the virtual environment directory, pip, and python executables
+            VENV_DIR = '/var/lib/jenkins/envs/venv' // virtual environment directory path
+            PIP = "${VENV_DIR}/bin/pip"             // the path to the pip executable
+            PYTHON = "${VENV_DIR}/bin/python"       // the path to the python executable
+            DEPLOY_DIR = "/home/shumin/shumin_blog"
+            DB_BACKUP_DIR = "/home/shumin/db_backup"
+            RELEASE_DIR = "/home/shumin/release"
         }
 
-        stage('Checkout') {
-            // Purpose: Retrieve the latest code from the specified branch in the Git repository
-            steps {
-                // Checkout the code from your repository
-                git branch: 'main', url: 'https://github.com/shuminchang/codemy_blog.git'
-            }
-        }
-
-        stage('Install Dependencies') {
-            // Purpose: Set up the necessary Python environment by upgrading pip and installing required dependencies
-            steps {
-                script {
-                    // Upgrade pip and install the required dependencies from requirements.txt
-                    sh """
-                    ${PIP} install --upgrade pip
-                    ${PIP} install -r requirements.txt
-                    """
-                }
-            }
-        }
-
-        stage('Run Server') {
-            // Purpose: Start the Django development server to run tests against it
-            steps {
-                script {
-                    // Ensure the port 8002 is not already in use
-                    sh """
-                    if lsof -i:8002; then
-                        echo "Port 8002 is already in use. Existing."
-                        exit 1
-                    fi
-                    """
-                    // Start the Django development server in the background and save the process ID
-                    sh """
-                    ${PYTHON} manage.py runserver 8002 > server_log.txt 2>&1 &
-                    echo \$! > server_pid.txt
-                    """
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            // Purpose: Execute the test suite to verify the integrity of the application
-            steps {
-                script {
-                    // Give the server some time to start
-                    sleep 10
-
-                    // Check if the server started correctly using the saved process ID
-                    def server_pid = readFile('server_pid.txt').trim()
-                    if (sh(returnStatus: true, script: "ps -p ${server_pid}") != 0) {
-                        echo "Django server failed to start. Check server_log.txt for details."
-                        sh 'cat server_log.txt'
-                        error "Django server failed to start."      // mark the build as failed if the server did not start
-                    } else {
-                        // Run tests if the server started correctly
-                        sh "${PYTHON} manage.py test" 
+        stages {
+            stage('Setup') {
+                // Purpose: Ensure a clean workspace to avoid issues from previous builds
+                steps {
+                    script {
+                        // Clean the workspace to ensure a fresh start
+                        cleanWs()
                     }
                 }
             }
-        }
 
-        stage('Cleanup') {
-            // Purpose: Stop the Django development server and clean up the environment
-            steps {
-                script {
-                    // Terminate the Django development server if it is still running
-                    def server_pid = readFile('server_pid.txt').trim()
-                    sh """
-                    if ps -p ${server_pid} > /dev/null; then
-                        kill ${server_pid}
-                    fi
-                    """
+            stage('Checkout') {
+                // Purpose: Retrieve the latest code from the specified branch in the Git repository
+                steps {
+                    // Checkout the code from your repository
+                    git branch: 'main', url: 'https://github.com/shuminchang/codemy_blog.git'
                 }
             }
-        }
 
-        stage('Backup Database and Current Release') {
-            when {
-                branch 'main'
-            }
-            steps {
-                script {
-                    withCredentials([
-                        sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
-                        string(credentialsId: 'server-ip', variable: 'SERVER_IP')
-                    ]) {
+            stage('Install Dependencies') {
+                // Purpose: Set up the necessary Python environment by upgrading pip and installing required dependencies
+                steps {
+                    script {
+                        // Upgrade pip and install the required dependencies from requirements.txt
                         sh """
-                        ssh -i ${SSH_KEY} ${SSH_USER}@${SERVER_IP} << EOF
-                        # Backup database
-                        TIMESTAMP=\$(date +%Y%m%d%H%M%S)
-                        python ${DEPLOY_DIR}/manage.py dumpdata > ${DB_BACKUP_DIR}/shumin_blog_\${TIMESTAMP}.json
-                        pg_dump mydatabase > ${DB_BACKUP_DIR}/shumin_blog_\${TIMESTAMP}.sql
-
-                        # Backup current release
-                        tar -czf ${RELEASE_DIR}/shumin_blog_\${TIMESTAMP}.tar.gz -C ${DEPLOY_DIR} .
-
-                        EOF
+                        ${PIP} install --upgrade pip
+                        ${PIP} install -r requirements.txt
                         """
                     }
                 }
             }
-        }
 
-        stage('Deploy') {
-            when {
-                branch 'main'
-            }
-            steps {
-                script {
-                    withCredentials([
-                        sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
-                        string(credentialsId: 'server-ip', variable: 'SERVER_IP')
-                    ]) {
+            stage('Run Server') {
+                // Purpose: Start the Django development server to run tests against it
+                steps {
+                    script {
+                        // Ensure the port 8002 is not already in use
                         sh """
-                        tar -czf build.tar.gz *
-
-                        scp -i ${SSH_KEY} build.tar.gz ${SSH_USER}@${SERVER_IP}:${DEPLOY_DIR}
-
-                        ssh -i ${SSH_KEY} ${SSH_USER}@${SERVER_IP} << EOF
-                        cd ${DEPLOY_DIR}
-                        tar -xzf build.tar.gz
-                        source venv/bin/activate
-                        pip install -r requirements.txt
-                        python manage.py migrate
-                        python manage.py collectstatic --noinput
-                        sudo systemctl restart apache2
-                        EOF
+                        if lsof -i:8002; then
+                            echo "Port 8002 is already in use. Existing."
+                            exit 1
+                        fi
+                        """
+                        // Start the Django development server in the background and save the process ID
+                        sh """
+                        ${PYTHON} manage.py runserver 8002 > server_log.txt 2>&1 &
+                        echo \$! > server_pid.txt
                         """
                     }
                 }
             }
-        }
-    }
 
-    // Defines actions that always run after the stages
-    post {
-        always {
-            // Purpose: Ensure the server log is archived after the build, regradless of the result
-            archiveArtifacts artifacts: 'server_log.txt', allowEmptyArchive: true
+            stage('Run Tests') {
+                // Purpose: Execute the test suite to verify the integrity of the application
+                steps {
+                    script {
+                        // Give the server some time to start
+                        sleep 10
+
+                        // Check if the server started correctly using the saved process ID
+                        def server_pid = readFile('server_pid.txt').trim()
+                        if (sh(returnStatus: true, script: "ps -p ${server_pid}") != 0) {
+                            echo "Django server failed to start. Check server_log.txt for details."
+                            sh 'cat server_log.txt'
+                            error "Django server failed to start."      // mark the build as failed if the server did not start
+                        } else {
+                            // Run tests if the server started correctly
+                            sh "${PYTHON} manage.py test" 
+                        }
+                    }
+                }
+            }
+
+            stage('Cleanup') {
+                // Purpose: Stop the Django development server and clean up the environment
+                steps {
+                    script {
+                        // Terminate the Django development server if it is still running
+                        def server_pid = readFile('server_pid.txt').trim()
+                        sh """
+                        if ps -p ${server_pid} > /dev/null; then
+                            kill ${server_pid}
+                        fi
+                        """
+                    }
+                }
+            }
+
+            stage('Backup Database and Current Release') {
+                when {
+                    expression {
+                        env.BRANCH_NAME == 'main'
+                    }
+                }
+                steps {
+                    script {
+                        withCredentials([
+                            sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
+                            string(credentialsId: 'server-ip', variable: 'SERVER_IP')
+                        ]) {
+                            sh """
+                            ssh -i ${SSH_KEY} ${SSH_USER}@${SERVER_IP} << EOF
+                            # Backup database
+                            TIMESTAMP=\$(date +%Y%m%d%H%M%S)
+                            python ${DEPLOY_DIR}/manage.py dumpdata > ${DB_BACKUP_DIR}/shumin_blog_\${TIMESTAMP}.json
+                            pg_dump mydatabase > ${DB_BACKUP_DIR}/shumin_blog_\${TIMESTAMP}.sql
+
+                            # Backup current release
+                            tar -czf ${RELEASE_DIR}/shumin_blog_\${TIMESTAMP}.tar.gz -C ${DEPLOY_DIR} .
+
+                            EOF
+                            """
+                        }
+                    }
+                }
+            }
+
+            stage('Deploy') {
+                when {
+                    expression {
+                        env.BRANCH_NAME == 'main'
+                    }
+                }
+                steps {
+                    script {
+                        withCredentials([
+                            sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
+                            string(credentialsId: 'server-ip', variable: 'SERVER_IP')
+                        ]) {
+                            sh """
+                            tar -czf build.tar.gz *
+
+                            scp -i ${SSH_KEY} build.tar.gz ${SSH_USER}@${SERVER_IP}:${DEPLOY_DIR}
+
+                            ssh -i ${SSH_KEY} ${SSH_USER}@${SERVER_IP} << EOF
+                            cd ${DEPLOY_DIR}
+                            tar -xzf build.tar.gz
+                            source venv/bin/activate
+                            pip install -r requirements.txt
+                            python manage.py migrate
+                            python manage.py collectstatic --noinput
+                            sudo systemctl restart apache2
+                            EOF
+                            """
+                        }
+                    }
+                }
+            }
         }
-        cleanup {
-            // Purpose: Ensure the workspace is cleaned up after the build
-            cleanWs()
+
+        // Defines actions that always run after the stages
+        post {
+            always {
+                // Purpose: Ensure the server log is archived after the build, regradless of the result
+                archiveArtifacts artifacts: 'server_log.txt', allowEmptyArchive: true
+            }
+            cleanup {
+                // Purpose: Ensure the workspace is cleaned up after the build
+                cleanWs()
+            }
         }
     }
-}
