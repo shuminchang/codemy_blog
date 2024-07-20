@@ -121,18 +121,14 @@
                             sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
                             string(credentialsId: 'server-ip', variable: 'SERVER_IP')
                         ]) {
-                            sh """
-                            ssh -i ${SSH_KEY} ${SSH_USER}@${SERVER_IP} << EOF
-                            # Backup database
-                            TIMESTAMP=\$(date +%Y%m%d%H%M%S)
-                            python ${DEPLOY_DIR}/manage.py dumpdata > ${DB_BACKUP_DIR}/shumin_blog_\${TIMESTAMP}.json
-                            pg_dump mydatabase > ${DB_BACKUP_DIR}/shumin_blog_\${TIMESTAMP}.sql
-
-                            # Backup current release
-                            tar -czf ${RELEASE_DIR}/shumin_blog_\${TIMESTAMP}.tar.gz -C ${DEPLOY_DIR} .
-
+                            sh '''
+                            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+                            ssh -i $SSH_KEY $SSH_USER@$SERVER_IP << EOF
+                            python ${DEPLOY_DIR}/manage.py dumpdata > ${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.json
+                            pg_dump mydatabase > ${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.sql
+                            tar -czf ${RELEASE_DIR}/shumin_blog_${TIMESTAMP}.tar.gz -C ${DEPLOY_DIR} .
                             EOF
-                            """
+                            '''
                         }
                     }
                 }
@@ -150,13 +146,13 @@
                             sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
                             string(credentialsId: 'server-ip', variable: 'SERVER_IP')
                         ]) {
-                            sh """
+                            sh '''
                             tar -czf build.tar.gz *
 
-                            scp -i ${SSH_KEY} build.tar.gz ${SSH_USER}@${SERVER_IP}:${DEPLOY_DIR}
+                            scp -i $SSH_KEY build.tar.gz $SSH_USER@$SERVER_IP:$DEPLOY_DIR
 
-                            ssh -i ${SSH_KEY} ${SSH_USER}@${SERVER_IP} << EOF
-                            cd ${DEPLOY_DIR}
+                            ssh -i $SSH_KEY $SSH_USER@$SERVER_IP << EOF
+                            cd $DEPLOY_DIR
                             tar -xzf build.tar.gz
                             source venv/bin/activate
                             pip install -r requirements.txt
@@ -164,7 +160,7 @@
                             python manage.py collectstatic --noinput
                             sudo systemctl restart apache2
                             EOF
-                            """
+                            '''
                         }
                     }
                 }
