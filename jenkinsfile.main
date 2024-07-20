@@ -110,29 +110,36 @@
             }
 
             stage('Backup Database and Current Release') {
-                when {
-                    expression {
-                        return env.GIT_BRANCH == 'origin/main'
-                    }
+            when {
+                expression {
+                    return env.GIT_BRANCH == 'origin/main'
                 }
-                steps {
-                    script {
-                        withCredentials([
-                            sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
-                            string(credentialsId: 'server-ip', variable: 'SERVER_IP')
-                        ]) {
-                            sh '''
-                            TIMESTAMP=$(date +%Y%m%d%H%M%S)
-                            ssh -i $SSH_KEY $SSH_USER@$SERVER_IP << EOF
-                            python ${DEPLOY_DIR}/manage.py dumpdata > ${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.json
-                            pg_dump mydatabase > ${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.sql
-                            tar -czf ${RELEASE_DIR}/shumin_blog_${TIMESTAMP}.tar.gz -C ${DEPLOY_DIR} .
-                            EOF
-                            '''
-                        }
+            }
+            steps {
+                script {
+                    withCredentials([
+                        sshUserPrivateKey(credentialsId: 'deploy-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER'),
+                        string(credentialsId: 'server-ip', variable: 'SERVER_IP')
+                    ]) {
+                        sh '''
+                        echo "DEPLOY_DIR: ${DEPLOY_DIR}"
+                        echo "DB_BACKUP_DIR: ${DB_BACKUP_DIR}"
+                        echo "RELEASE_DIR: ${RELEASE_DIR}"
+                        echo "SSH_USER: ${SSH_USER}"
+                        echo "SSH_KEY: ${SSH_KEY}"
+                        echo "SERVER_IP: ${SERVER_IP}"
+                        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+                        echo "TIMESTAMP: ${TIMESTAMP}"
+                        ssh -i $SSH_KEY $SSH_USER@$SERVER_IP << EOF
+                        python '${DEPLOY_DIR}/manage.py' dumpdata > '${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.json'
+                        pg_dump mydatabase > '${DB_BACKUP_DIR}/shumin_blog_${TIMESTAMP}.sql'
+                        tar -czf '${RELEASE_DIR}/shumin_blog_${TIMESTAMP}.tar.gz' -C '${DEPLOY_DIR}' .
+                        EOF
+                        '''
                     }
                 }
             }
+        }
 
             stage('Deploy') {
                 when {
