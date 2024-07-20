@@ -15,11 +15,10 @@ pipeline {
             steps {
                 script {
                     echo "GIT_BRANCH: ${env.GIT_BRANCH}"
-                    echo "BRANCH_NAME: ${env.BRANCH_NAME}"
                 }
             }
         }
-        
+
         stage('Setup') {
             // Purpose: Ensure a clean workspace to avoid issues from previous builds
             steps {

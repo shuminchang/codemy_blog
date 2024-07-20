@@ -14,6 +14,14 @@
         }
 
         stages {
+            stage('Print Environment Variables') {
+                steps {
+                    script {
+                        echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+                    }
+                }
+            }
+
             stage('Setup') {
                 // Purpose: Ensure a clean workspace to avoid issues from previous builds
                 steps {
@@ -104,7 +112,7 @@
             stage('Backup Database and Current Release') {
                 when {
                     expression {
-                        env.BRANCH_NAME == 'main'
+                        return env.GIT_BRANCH == 'origin/main'
                     }
                 }
                 steps {
@@ -133,7 +141,7 @@
             stage('Deploy') {
                 when {
                     expression {
-                        env.BRANCH_NAME == 'main'
+                        return env.GIT_BRANCH == 'origin/main'
                     }
                 }
                 steps {
