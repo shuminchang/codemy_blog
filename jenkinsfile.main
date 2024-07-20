@@ -130,7 +130,7 @@
                         echo "SERVER_IP: ${SERVER_IP}"
                         TIMESTAMP=$(date +%Y%m%d%H%M%S)
                         echo "TIMESTAMP: ${TIMESTAMP}"
-                        ssh shumin@139.162.86.206
+                        ssh -i $SSH_KEY shumin@139.162.86.206
                         python '/home/shumin/shumin_blog/manage.py' dumpdata > '/home/shumin/db_backup/shumin_blog_${TIMESTAMP}.json'
                         pg_dump mydatabase > '/home/shumin/db_backup/shumin_blog_${TIMESTAMP}.sql'
                         EOF
